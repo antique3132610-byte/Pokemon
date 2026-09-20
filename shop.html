@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PokéMart | Pokémon Card Shop</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6fb;
+            color: #222;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 16px 40px;
+
+            background: #111827;
+            color: white;
+
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #ffd166;
+        }
+
+        .cart {
+            background: #ffcb05;
+            color: #111827 !important;
+            padding: 9px 15px;
+            border-radius: 10px;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            min-height: 420px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            text-align: center;
+
+            padding: 60px 20px;
+
+            background:
+                radial-gradient(circle at top, #fff4a3, transparent 35%),
+                linear-gradient(135deg, #ffcb05, #ff8c00);
+        }
+
+        .hero h1 {
+            font-size: clamp(45px, 8vw, 85px);
+            color: #1d2671;
+
+            text-shadow: 3px 3px 0 white;
+        }
+
+        .hero p {
+            margin-top: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #222;
+        }
+
+        .shop-button {
+            margin-top: 30px;
+
+            padding: 15px 28px;
+
+            border: none;
+            border-radius: 12px;
+
+            background: #1d2671;
+            color: white;
+
+            font-size: 17px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .shop-button:hover {
+            transform: scale(1.06);
+        }
+
+        /* =========================
+           SECTION
+        ========================= */
+
+        .section {
+            max-width: 1200px;
+            margin: auto;
+            padding: 50px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 35px;
+            margin-bottom: 30px;
+        }
+
+        /* =========================
+           FILTERS
+        ========================= */
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+
+            margin-bottom: 35px;
+        }
+
+        .filter-btn {
+            border: none;
+            padding: 10px 17px;
+
+            border-radius: 20px;
+
+            background: white;
+            color: #333;
+
+            font-weight: bold;
+            cursor: pointer;
+
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+            transition: 0.2s;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: #1d2671;
+            color: white;
+        }
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        .search-box {
+            display: block;
+
+            width: min(600px, 100%);
+
+            margin: 0 auto 30px;
+
+            padding: 15px 20px;
+
+            border: 2px solid #ddd;
+            border-radius: 30px;
+
+            font-size: 16px;
+
+            outline: none;
+        }
+
+        .search-box:focus {
+            border-color: #1d2671;
+        }
+
+        /* =========================
+           PRODUCTS
+        ========================= */
+
+        .products {
+            display: grid;
+
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+
+            gap: 25px;
+        }
+
+        .product {
+            background: white;
+
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+
+            transition: 0.25s;
+
+            position: relative;
+        }
+
+        .product:hover {
+            transform: translateY(-7px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.16);
+        }
+
+        .product-image {
+            height: 280px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #eef1f7;
+
+            padding: 20px;
+        }
+
+        .product-image img {
+            max-width: 100%;
+            max-height: 100%;
+
+            object-fit: contain;
+
+            transition: 0.25s;
+        }
+
+        .product:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-info h3 {
+            font-size: 21px;
+            margin-bottom: 8px;
+        }
+
+        .rarity {
+            display: inline-block;
+
+            padding: 5px 9px;
+
+            background: #eee;
+            border-radius: 7px;
+
+            font-size: 12px;
+            font-weight: bold;
+
+            margin-bottom: 12px;
+        }
+
+        .price {
+            font-size: 23px;
+            font-weight: bold;
+
+            color: #1d2671;
+
+            margin-bottom: 15px;
+        }
+
+        .add-cart {
+            width: 100%;
+
+            border: none;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            background: #ffcb05;
+            color: #111827;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .add-cart:hover {
+            background: #ffb700;
+        }
+
+        .wishlist {
+            position: absolute;
+
+            top: 12px;
+            right: 12px;
+
+            width: 38px;
+            height: 38px;
+
+            border: none;
+            border-radius: 50%;
+
+            background: white;
+
+            font-size: 20px;
+
+            cursor: pointer;
+
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .wishlist.active {
+            color: red;
+        }
+
+        /* =========================
+           CART
+        ========================= */
+
+        .cart-panel {
+            position: fixed;
+
+            right: -420px;
+            top: 0;
+
+            width: 400px;
+            max-width: 90%;
+
+            height: 100vh;
+
+            background: white;
+
+            z-index: 2000;
+
+            box-shadow: -5px 0 25px rgba(0,0,0,0.2);
+
+            padding: 25px;
+
+            transition: 0.3s;
+
+            overflow-y: auto;
+        }
+
+        .cart-panel.open {
+            right: 0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 25px;
+        }
+
+        .close-cart {
+            border: none;
+            background: none;
+
+            font-size: 28px;
+            cursor: pointer;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 12px;
+
+            padding: 15px 0;
+
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart-item img {
+            width: 65px;
+            height: 85px;
+
+            object-fit: contain;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-info h4 {
+            margin-bottom: 6px;
+        }
+
+        .remove-item {
+            border: none;
+            background: none;
+
+            color: #d00;
+
+            cursor: pointer;
+        }
+
+        .cart-total {
+            margin-top: 25px;
+
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .checkout {
+            width: 100%;
+
+            margin-top: 20px;
+
+            padding: 14px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: #1d2671;
+            color: white;
+
+            font-weight: bold;
+            font-size: 16px;
+
+            cursor: pointer;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            margin-top: 50px;
+
+            padding: 35px 20px;
+
+            background: #111827;
+            color: white;
+
+            text-align: center;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 700px) {
+
+            nav {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                gap: 10px;
+            }
+
+            .nav-links a {
+                font-size: 13px;
+            }
+
+            .hero {
+                min-height: 350px;
+            }
+
+            .product-image {
+                height: 240px;
+            }
+
+            .cart-panel {
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav>
+
+        <div class="logo">
+            ⚡ PokéMart
+        </div>
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Pokédex
+            </a>
+
+            <a href="#shop">
+                Shop
+            </a>
+
+            <a href="#wishlist">
+                ❤️ Wishlist
+            </a>
+
+            <a href="#" class="cart" onclick="openCart(); return false;">
+                🛒 Cart (<span id="cart-count">0</span>)
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================
+         HERO
+    ========================== -->
+
+    <section class="hero">
+
+        <h1>PokéMart</h1>
+
+        <p>
+            Catch 'em. Collect 'em. Own 'em.
+        </p>
+
+        <button class="shop-button"
+                onclick="document.getElementById('shop').scrollIntoView({behavior:'smooth'})">
+
+            🛍️ Shop Pokémon Cards
+
+        </button>
+
+    </section>
+
+
+    <!-- =========================
+         SHOP
+    ========================== -->
+
+    <section class="section" id="shop">
+
+        <h2 class="section-title">
+            🃏 Featured Cards
+        </h2>
+
+        <input
+            type="text"
+            id="search"
+            class="search-box"
+            placeholder="🔎 Search cards..."
+        >
+
+
+        <div class="controls">
+
+            <button class="filter-btn active" onclick="filterProducts('all', this)">
+                All
+            </button>
+
+            <button class="filter-btn" onclick="filterProducts('rare', this)">
+                💎 Rare
+            </button>
+
+            <button class="filter-btn" onclick="filterProducts('holo', this)">
+                ✨ Holo
+            </button>
+
+            <button class="filter-btn" onclick="filterProducts('vintage', this)">
+                🕰️ Vintage
+            </button>
+
+            <button class="filter-btn" onclick="filterProducts('modern', this)">
+                ⚡ Modern
+            </button>
+
+        </div>
+
+
+        <div class="products" id="products">
+
+            <!-- PRODUCTS CREATED BY JAVASCRIPT -->
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         CART PANEL
+    ========================== -->
+
+    <div class="cart-panel" id="cart-panel">
+
+        <div class="cart-header">
+
+            <h2>🛒 Your Cart</h2>
+
+            <button class="close-cart" onclick="closeCart()">
+                ×
+            </button>
+
+        </div>
+
+        <div id="cart-items">
+            <p>Your cart is empty.</p>
+        </div>
+
+        <div class="cart-total">
+            Total: ₹<span id="cart-total">0</span>
+        </div>
+
+        <button class="checkout" onclick="checkout()">
+            Proceed to Checkout
+        </button>
+
+    </div>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <h3>⚡ PokéMart</h3>
+
+        <p style="margin-top:10px;">
+            Your Pokémon card collection starts here.
+        </p>
+
+        <p style="margin-top:20px; opacity:0.7;">
+            © 2026 PokéMart
+        </p>
+
+    </footer>
+
+
+    <script>
+
+        /* =========================
+           PRODUCT DATA
+        ========================== */
+
+        const products = [
+
+            {
+                id: 1,
+                name: "Charizard ex",
+                rarity: "Rare",
+                category: "rare",
+                price: 1499,
+                image: "https://images.pokemontcg.io/sv3/125.png"
+            },
+
+            {
+                id: 2,
+                name: "Pikachu",
+                rarity: "Holo",
+                category: "holo",
+                price: 799,
+                image: "https://images.pokemontcg.io/sv4/51.png"
+            },
+
+            {
+                id: 3,
+                name: "Mew ex",
+                rarity: "Rare",
+                category: "rare",
+                price: 1299,
+                image: "https://images.pokemontcg.io/sv2/193.png"
+            },
+
+            {
+                id: 4,
+                name: "Gengar ex",
+                rarity: "Holo",
+                category: "holo",
+                price: 999,
+                image: "https://images.pokemontcg.io/sv3/104.png"
+            },
+
+            {
+                id: 5,
+                name: "Bulbasaur",
+                rarity: "Vintage",
+                category: "vintage",
+                price: 599,
+                image: "https://images.pokemontcg.io/base1/44.png"
+            },
+
+            {
+                id: 6,
+                name: "Blastoise",
+                rarity: "Vintage",
+                category: "vintage",
+                price: 1999,
+                image: "https://images.pokemontcg.io/base1/2.png"
+            },
+
+            {
+                id: 7,
+                name: "Eevee",
+                rarity: "Modern",
+                category: "modern",
+                price: 499,
+                image: "https://images.pokemontcg.io/sv6/135.png"
+            },
+
+            {
+                id: 8,
+                name: "Rayquaza ex",
+                rarity: "Rare",
+                category: "rare",
+                price: 1799,
+                image: "https://images.pokemontcg.io/sv7/157.png"
+            }
+
+        ];
+
+
+        /* =========================
+           CART
+        ========================== */
+
+        let cart = JSON.parse(localStorage.getItem("pokemonCart")) || [];
+
+
+        /* =========================
+           DISPLAY PRODUCTS
+        ========================== */
+
+        function displayProducts(list = products) {
+
+            const container = document.getElementById("products");
+
+            container.innerHTML = "";
+
+            list.forEach(product => {
+
+                const card = document.createElement("div");
+
+                card.className = "product";
+
+                card.innerHTML = `
+
+                    <button
+                        class="wishlist"
+                        onclick="toggleWishlist(${product.id}, this)"
+                    >
+                        ♡
+                    </button>
+
+                    <div class="product-image">
+
+                        <img
+                            src="${product.image}"
+                            alt="${product.name}"
+                            loading="lazy"
+                        >
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <h3>
+                            ${product.name}
+                        </h3>
+
+                        <span class="rarity">
+                            ${product.rarity}
+                        </span>
+
+                        <div class="price">
+                            ₹${product.price.toLocaleString("en-IN")}
+                        </div>
+
+                        <button
+                            class="add-cart"
+                            onclick="addToCart(${product.id})"
+                        >
+                            🛒 Add to Cart
+                        </button>
+
+                    </div>
+
+                `;
+
+                container.appendChild(card);
+
+            });
+
+        }
+
+
+        /* =========================
+           FILTER
+        ========================== */
+
+        function filterProducts(category, button) {
+
+            document.querySelectorAll(".filter-btn")
+                .forEach(btn => btn.classList.remove("active"));
+
+            button.classList.add("active");
+
+            if (category === "all") {
+
+                displayProducts(products);
+
+            } else {
+
+                const filtered = products.filter(
+                    product => product.category === category
+                );
+
+                displayProducts(filtered);
+
+            }
+
+        }
+
+
+        /* =========================
+           SEARCH
+        ========================== */
+
+        document.getElementById("search")
+            .addEventListener("input", function() {
+
+                const search = this.value.toLowerCase();
+
+                const filtered = products.filter(product =>
+                    product.name.toLowerCase().includes(search)
+                );
+
+                displayProducts(filtered);
+
+            });
+
+
+        /* =========================
+           ADD TO CART
+        ========================== */
+
+        function addToCart(id) {
+
+            const product = products.find(product => product.id === id);
+
+            cart.push(product);
+
+            localStorage.setItem(
+                "pokemonCart",
+                JSON.stringify(cart)
+            );
+
+            updateCart();
+
+            alert(`${product.name} added to your cart! 🛒`);
+
+        }
+
+
+        /* =========================
+           UPDATE CART
+        ========================== */
+
+        function updateCart() {
+
+            document.getElementById("cart-count")
+                .textContent = cart.length;
+
+            const container =
+                document.getElementById("cart-items");
+
+            if (cart.length === 0) {
+
+                container.innerHTML =
+                    "<p>Your cart is empty.</p>";
+
+                document.getElementById("cart-total")
+                    .textContent = "0";
+
+                return;
+
+            }
+
+            container.innerHTML = "";
+
+            let total = 0;
+
+            cart.forEach((product, index) => {
+
+                total += product.price;
+
+                const item = document.createElement("div");
+
+                item.className = "cart-item";
+
+                item.innerHTML = `
+
+                    <img
+                        src="${product.image}"
+                        alt="${product.name}"
+                    >
+
+                    <div class="cart-item-info">
+
+                        <h4>
+                            ${product.name}
+                        </h4>
+
+                        <p>
+                            ₹${product.price.toLocaleString("en-IN")}
+                        </p>
+
+                        <button
+                            class="remove-item"
+                            onclick="removeFromCart(${index})"
+                        >
+                            Remove
+                        </button>
+
+                    </div>
+
+                `;
+
+                container.appendChild(item);
+
+            });
+
+            document.getElementById("cart-total")
+                .textContent = total.toLocaleString("en-IN");
+
+        }
+
+
+        /* =========================
+           REMOVE FROM CART
+        ========================== */
+
+        function removeFromCart(index) {
+
+            cart.splice(index, 1);
+
+            localStorage.setItem(
+                "pokemonCart",
+                JSON.stringify(cart)
+            );
+
+            updateCart();
+
+        }
+
+
+        /* =========================
+           OPEN CART
+        ========================== */
+
+        function openCart() {
+
+            document.getElementById("cart-panel")
+                .classList.add("open");
+
+        }
+
+
+        /* =========================
+           CLOSE CART
+        ========================== */
+
+        function closeCart() {
+
+            document.getElementById("cart-panel")
+                .classList.remove("open");
+
+        }
+
+
+        /* =========================
+           WISHLIST
+        ========================== */
+
+        function toggleWishlist(id, button) {
+
+            button.classList.toggle("active");
+
+            button.textContent =
+                button.classList.contains("active")
+                    ? "♥"
+                    : "♡";
+
+        }
+
+
+        /* =========================
+           CHECKOUT
+        ========================== */
+
+        function checkout() {
+
+            if (cart.length === 0) {
+
+                alert("Your cart is empty! 🛒");
+
+                return;
+
+            }
+
+            alert(
+                "Checkout is coming soon! 🚀\n\n" +
+                "Your cart currently contains " +
+                cart.length +
+                " item(s)."
+            );
+
+        }
+
+
+        /* =========================
+           INITIAL LOAD
+        ========================== */
+
+        displayProducts();
+
+        updateCart();
+
+    </script>
+
+</body>
+</html>

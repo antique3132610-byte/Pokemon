@@ -1,12 +1,261 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My First Website</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pokémon World</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: white;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: rgba(0, 0, 0, 0.35);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #ffd700;
+        }
+
+        /* Hero */
+
+        .hero {
+            text-align: center;
+            padding: 90px 20px;
+        }
+
+        .hero h1 {
+            font-size: 60px;
+            margin-bottom: 20px;
+            color: #ffd700;
+            text-shadow: 4px 4px 0 #333;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: #ddd;
+            margin-bottom: 30px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 14px 28px;
+            background: #e63946;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .button:hover {
+            transform: scale(1.08);
+            background: #ff4757;
+        }
+
+        /* Pokémon section */
+
+        .pokemon-section {
+            padding: 50px 8%;
+            text-align: center;
+        }
+
+        .pokemon-section h2 {
+            font-size: 38px;
+            margin-bottom: 35px;
+        }
+
+        .cards {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 25px;
+        }
+
+        .card {
+            width: 230px;
+            background: white;
+            color: #222;
+            border-radius: 20px;
+            padding: 20px;
+            transition: 0.3s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .card img {
+            width: 160px;
+            height: 160px;
+            object-fit: contain;
+        }
+
+        .card h3 {
+            font-size: 25px;
+            margin: 10px 0;
+        }
+
+        .type {
+            display: inline-block;
+            background: #eee;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        /* Footer */
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            background: rgba(0, 0, 0, 0.4);
+            color: #aaa;
+        }
+
+        /* Mobile */
+
+        @media (max-width: 600px) {
+
+            nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav a {
+                margin: 0 8px;
+            }
+
+            .hero h1 {
+                font-size: 42px;
+            }
+
+            .hero {
+                padding: 60px 20px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>Hello! 👋</h1>
-    <p>Welcome to my first website.</p>
+    <nav>
+        <div class="logo">⚡ Pokémon World</div>
+
+        <div>
+            <a href="#home">Home</a>
+            <a href="#pokemon">Pokémon</a>
+        </div>
+    </nav>
+
+
+    <section class="hero" id="home">
+
+        <h1>Welcome to Pokémon World!</h1>
+
+        <p>
+            Explore amazing Pokémon and begin your adventure.
+        </p>
+
+        <a href="#pokemon" class="button">
+            Explore Pokémon
+        </a>
+
+    </section>
+
+
+    <section class="pokemon-section" id="pokemon">
+
+        <h2>Featured Pokémon</h2>
+
+        <div class="cards">
+
+            <div class="card">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
+                     alt="Pikachu">
+
+                <h3>Pikachu</h3>
+
+                <span class="type">
+                    ⚡ Electric
+                </span>
+            </div>
+
+
+            <div class="card">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
+                     alt="Bulbasaur">
+
+                <h3>Bulbasaur</h3>
+
+                <span class="type">
+                    🌱 Grass
+                </span>
+            </div>
+
+
+            <div class="card">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"
+                     alt="Charmander">
+
+                <h3>Charmander</h3>
+
+                <span class="type">
+                    🔥 Fire
+                </span>
+            </div>
+
+
+            <div class="card">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png"
+                     alt="Squirtle">
+
+                <h3>Squirtle</h3>
+
+                <span class="type">
+                    💧 Water
+                </span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+        <p>© 2026 Pokémon World | Made with ❤️ and HTML</p>
+    </footer>
 
 </body>
 </html>

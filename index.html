@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Pokémon World</title>
+    <title>Pokédex</title>
 
     <style>
         * {
@@ -15,83 +15,66 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             color: white;
             min-height: 100vh;
         }
-
-        /* Navigation */
 
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px 8%;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0, 0, 0, 0.4);
         }
 
         .logo {
             font-size: 28px;
             font-weight: bold;
+            color: #ffd700;
         }
 
         nav a {
             color: white;
             text-decoration: none;
             margin-left: 25px;
-            font-weight: bold;
         }
-
-        nav a:hover {
-            color: #ffd700;
-        }
-
-        /* Hero */
 
         .hero {
             text-align: center;
-            padding: 90px 20px;
+            padding: 70px 20px 40px;
         }
 
         .hero h1 {
-            font-size: 60px;
-            margin-bottom: 20px;
+            font-size: 55px;
             color: #ffd700;
-            text-shadow: 4px 4px 0 #333;
+            text-shadow: 4px 4px #333;
+            margin-bottom: 15px;
         }
 
         .hero p {
-            font-size: 20px;
+            font-size: 19px;
             color: #ddd;
-            margin-bottom: 30px;
         }
 
-        .button {
-            display: inline-block;
-            padding: 14px 28px;
-            background: #e63946;
-            color: white;
-            text-decoration: none;
+        .search-area {
+            text-align: center;
+            margin: 30px auto;
+        }
+
+        #search {
+            width: 300px;
+            max-width: 85%;
+            padding: 15px 20px;
+            border: none;
             border-radius: 30px;
-            font-weight: bold;
-            transition: 0.3s;
+            font-size: 17px;
+            outline: none;
         }
-
-        .button:hover {
-            transform: scale(1.08);
-            background: #ff4757;
-        }
-
-        /* Pokémon section */
 
         .pokemon-section {
-            padding: 50px 8%;
+            padding: 30px 8%;
             text-align: center;
-        }
-
-        .pokemon-section h2 {
-            font-size: 38px;
-            margin-bottom: 35px;
         }
 
         .cards {
@@ -99,71 +82,46 @@
             justify-content: center;
             flex-wrap: wrap;
             gap: 25px;
+            margin-top: 30px;
         }
 
         .card {
-            width: 230px;
+            width: 220px;
             background: white;
             color: #222;
             border-radius: 20px;
             padding: 20px;
-            transition: 0.3s;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: 0.3s;
         }
 
         .card:hover {
-            transform: translateY(-10px);
+            transform: translateY(-10px) scale(1.03);
         }
 
         .card img {
-            width: 160px;
-            height: 160px;
+            width: 150px;
+            height: 150px;
             object-fit: contain;
         }
 
-        .card h3 {
-            font-size: 25px;
+        .card h2 {
             margin: 10px 0;
+            text-transform: capitalize;
         }
 
         .type {
             display: inline-block;
-            background: #eee;
             padding: 6px 15px;
             border-radius: 20px;
-            font-size: 14px;
+            background: #eee;
         }
-
-        /* Footer */
 
         footer {
             text-align: center;
             padding: 30px;
             margin-top: 50px;
-            background: rgba(0, 0, 0, 0.4);
             color: #aaa;
-        }
-
-        /* Mobile */
-
-        @media (max-width: 600px) {
-
-            nav {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            nav a {
-                margin: 0 8px;
-            }
-
-            .hero h1 {
-                font-size: 42px;
-            }
-
-            .hero {
-                padding: 60px 20px;
-            }
         }
     </style>
 </head>
@@ -171,81 +129,83 @@
 <body>
 
     <nav>
-        <div class="logo">⚡ Pokémon World</div>
+        <div class="logo">⚡ Pokédex</div>
 
         <div>
-            <a href="#home">Home</a>
+            <a href="#">Home</a>
             <a href="#pokemon">Pokémon</a>
         </div>
     </nav>
 
 
-    <section class="hero" id="home">
+    <section class="hero">
 
-        <h1>Welcome to Pokémon World!</h1>
+        <h1>Pokédex</h1>
 
         <p>
-            Explore amazing Pokémon and begin your adventure.
+            Search and explore Pokémon!
         </p>
-
-        <a href="#pokemon" class="button">
-            Explore Pokémon
-        </a>
 
     </section>
 
 
-    <section class="pokemon-section" id="pokemon">
+    <div class="search-area">
 
-        <h2>Featured Pokémon</h2>
+        <input
+            type="text"
+            id="search"
+            placeholder="Search Pokémon..."
+            onkeyup="searchPokemon()"
+        >
+
+    </div>
+
+
+    <section class="pokemon-section" id="pokemon">
 
         <div class="cards">
 
-            <div class="card">
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png"
-                     alt="Pikachu">
+            <div class="card" data-name="pikachu">
 
-                <h3>Pikachu</h3>
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png">
 
-                <span class="type">
-                    ⚡ Electric
-                </span>
+                <h2>Pikachu</h2>
+
+                <span class="type">⚡ Electric</span>
+
             </div>
 
 
-            <div class="card">
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png"
-                     alt="Bulbasaur">
+            <div class="card" data-name="bulbasaur">
 
-                <h3>Bulbasaur</h3>
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png">
 
-                <span class="type">
-                    🌱 Grass
-                </span>
+                <h2>Bulbasaur</h2>
+
+                <span class="type">🌱 Grass</span>
+
             </div>
 
 
-            <div class="card">
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png"
-                     alt="Charmander">
+            <div class="card" data-name="charmander">
 
-                <h3>Charmander</h3>
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png">
 
-                <span class="type">
-                    🔥 Fire
-                </span>
+                <h2>Charmander</h2>
+
+                <span class="type">🔥 Fire</span>
+
             </div>
 
 
-            <div class="card">
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png"
-                     alt="Squirtle">
+            <div class="card" data-name="squirtle">
 
-                <h3>Squirtle</h3>
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/7.png">
 
-                <span class="type">
-                    💧 Water
-                </span>
+                <h2>Squirtle</h2>
+
+                <span class="type">💧 Water</span>
+
             </div>
 
         </div>
@@ -254,8 +214,40 @@
 
 
     <footer>
-        <p>© 2026 Pokémon World | Made with ❤️ and HTML</p>
+        <p>© 2026 My Pokédex</p>
     </footer>
+
+
+    <script>
+
+        function searchPokemon() {
+
+            let search =
+                document.getElementById("search").value.toLowerCase();
+
+            let cards =
+                document.querySelectorAll(".card");
+
+            cards.forEach(function(card) {
+
+                let name =
+                    card.getAttribute("data-name");
+
+                if (name.includes(search)) {
+
+                    card.style.display = "block";
+
+                } else {
+
+                    card.style.display = "none";
+
+                }
+
+            });
+
+        }
+
+    </script>
 
 </body>
 </html>

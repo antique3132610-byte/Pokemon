@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EVFORGE | Cart & Checkout</title>
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+<header id="site-nav"></header>
+<main class="wrap section">
+  <div class="eyebrow">YOUR COLLECTION</div>
+  <h1>YOUR <span>CART.</span></h1>
+  <div class="cart-layout">
+    <section class="panel">
+      <h2>Selected cards</h2>
+      <div id="cart-items"></div>
+      <a class="btn secondary" href="shop.html">← Continue shopping</a>
+    </section>
+    <aside class="panel">
+      <h2>Order summary</h2>
+      <div class="total"><span>Subtotal</span><strong id="subtotal">₹0</strong></div>
+      <div class="total"><span>Delivery estimate</span><strong id="shipping">₹0</strong></div>
+      <hr>
+      <div class="total grand"><span>Total</span><strong id="grand-total">₹0</strong></div>
+      <p class="small">Estimated delivery is free for demo orders of ₹1,500 or more; otherwise ₹99.</p>
+      <button class="btn full-btn" onclick="checkout()">🔒 Demo checkout</button>
+      <p id="checkout-message" role="status"></p>
+      <p class="small">No real payment, order submission or shipping takes place.</p>
+    </aside>
+  </div>
+</main>
+<footer>EVFORGE · Secure payment integration not configured</footer>
+</body>
+</html>

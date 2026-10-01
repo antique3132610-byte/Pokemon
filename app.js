@@ -658,6 +658,7 @@ function showDelivered() {
 }
 
 
+
 function startRace() {
   if (!hasOrder()) {
     window.location.replace("shop.html");
@@ -684,8 +685,6 @@ function startRace() {
     return;
   }
 
-  const length = route.getTotalLength();
-
   setText("delivery-status", "On the way");
   setText(
     "delivery-message",
@@ -701,19 +700,20 @@ function startRace() {
   const MAX_SPEED = 99;
   const ACCELERATION = 12;
   const BRAKING_DISTANCE = 0.08;
+  const BASE_PROGRESS = 0.0025;
 
   raceTimer = setInterval(() => {
     elapsed += 0.05;
 
     const remainingProgress = 1 - raceProgress;
 
-    // Gradually increase speed after starting.
+    // Gradually accelerate after starting.
     const accelerationTarget = Math.min(
       MAX_SPEED,
       10 + elapsed * ACCELERATION
     );
 
-    // Vary the target speed to simulate changing road conditions.
+    // Simulate changing road speeds.
     const roadSpeed =
       48 +
       20 * Math.sin(elapsed * 0.8) +
@@ -724,10 +724,12 @@ function startRace() {
       Math.max(20, Math.round(roadSpeed))
     );
 
-    // Apply gradual acceleration.
-    targetSpeed = Math.min(targetSpeed, accelerationTarget);
+    targetSpeed = Math.min(
+      targetSpeed,
+      accelerationTarget
+    );
 
-    // Brake progressively as the car approaches its destination.
+    // Brake as the car approaches its destination.
     if (remainingProgress < BRAKING_DISTANCE) {
       const brakingFactor = Math.max(
         0,
@@ -737,7 +739,7 @@ function startRace() {
       targetSpeed *= brakingFactor;
     }
 
-    // Smoothly approach the target instead of jumping between speeds.
+    // Smooth acceleration and deceleration.
     const change = targetSpeed > speed ? 0.8 : 1.5;
 
     if (speed < targetSpeed) {
@@ -746,14 +748,21 @@ function startRace() {
       speed = Math.max(targetSpeed, speed - change);
     }
 
-    // Advance the demo vehicle along the route.
-    // This is a visual simulation, not real GPS-based physics.
-    const progressStep = 0.0025;
+    // ACTUAL ANIMATION SPEED:
+    // Higher km/h moves the car faster.
+    // Lower km/h moves the car slower.
+    const progressStep =
+      (speed / MAX_SPEED) * BASE_PROGRESS;
 
-    raceProgress = Math.min(
-      1,
-      raceProgress + progressStep
-    );
+    // Avoid getting stuck infinitesimally close to the finish.
+    if (remainingProgress <= 0.001) {
+      raceProgress = 1;
+    } else {
+      raceProgress = Math.min(
+        1,
+        raceProgress + progressStep
+      );
+    }
 
     localStorage.setItem(
       "evforgeRaceProgress",
@@ -762,15 +771,20 @@ function startRace() {
 
     placeCarAt(raceProgress);
 
-    const remainingDistance =
-      Math.max(0, 12.4 * (1 - raceProgress));
+    const remainingDistance = Math.max(
+      0,
+      12.4 * (1 - raceProgress)
+    );
 
     setText(
       "speed",
       raceProgress >= 1
         ? "0"
         : String(
-            Math.min(MAX_SPEED, Math.max(1, Math.round(speed)))
+            Math.min(
+              MAX_SPEED,
+              Math.max(1, Math.round(speed))
+            )
           )
     );
 
@@ -782,11 +796,10 @@ function startRace() {
       bar.style.width = (raceProgress * 100) + "%";
     }
 
-    // Stop the car when the delivery is complete.
+    // Finish the delivery.
     if (raceProgress >= 1) {
       clearInterval(raceTimer);
       raceTimer = null;
-      speed = 0;
 
       setText("speed", "0");
       setText("distance", "0.0");

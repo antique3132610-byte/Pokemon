@@ -1,7 +1,7 @@
 
 /* ==========================================
    EVFORGE APP
-   Shopping cart + checkout + Turbo Tracker
+   Shop + Wishlist + Cart + Checkout + Tracker
    ========================================== */
 
 const products = [
@@ -55,7 +55,7 @@ function cartCount() {
 function subtotal() {
   return Object.entries(cart).reduce((sum, [id, quantity]) => {
     const product = products.find(p => p.id === id);
-    return sum + (product ? product.price * quantity : 0);
+    return sum + (product ? product.price * Number(quantity) : 0);
   }, 0);
 }
 
@@ -65,16 +65,14 @@ function setText(id, value) {
 }
 
 /* ==========================================
-   NAVIGATION
-   Tracker appears only after checkout.
+   NAVIGATION AND TRACKER ACCESS
    ========================================== */
 
 function setupNav() {
   const nav = document.getElementById("site-nav");
   if (!nav) return;
 
-  const current =
-    location.pathname.split("/").pop() || "index.html";
+  const current = location.pathname.split("/").pop() || "index.html";
 
   const links = [
     ["Home", "index.html"],
@@ -83,7 +81,7 @@ function setupNav() {
   ];
 
   if (hasOrder()) {
-    links.push(["Turbo Tracker", "tracker.html"]);
+    links.push(["Turbo Tracker 🏁", "tracker.html"]);
   }
 
   links.push(["Cart 🛒 " + cartCount(), "cart.html"]);
@@ -99,8 +97,52 @@ function setupNav() {
   `;
 }
 
+function lockTrackerLinks() {
+  const unlocked = hasOrder();
+
+  document.querySelectorAll("a[href]").forEach(link => {
+    let url;
+
+    try {
+      url = new URL(link.getAttribute("href"), location.href);
+    } catch {
+      return;
+    }
+
+    const isTracker = url.pathname.endsWith("/tracker.html");
+    const isSpecialButton =
+      link.id === "home-tracker-link" ||
+      link.id === "discount-tracker-link";
+
+    if (!isTracker && !isSpecialButton) return;
+
+    if (unlocked) {
+      link.href = "tracker.html";
+
+      if (link.id === "discount-tracker-link") {
+        link.textContent = "🏁 Open Turbo Tracker →";
+      } else if (link.id === "home-tracker-link") {
+        link.textContent = "Start tracker →";
+      }
+
+      return;
+    }
+
+    link.href = "shop.html";
+
+    if (link.id === "home-tracker-link") {
+      link.textContent = "Unlock after checkout →";
+    } else if (link.id === "discount-tracker-link") {
+      link.textContent = "🔒 Unlock Turbo Tracker after checkout →";
+    } else if (!link.closest("#site-nav")) {
+      link.textContent = "🔒 Unlock after checkout";
+    }
+  });
+}
+
 function updateCartBadge() {
   setupNav();
+  lockTrackerLinks();
 }
 
 /* ==========================================
@@ -131,11 +173,11 @@ function productCard(product) {
         </p>
 
         <div class="product-buttons">
-          <button
-            class="btn"
+          <button class="btn"
             ${product.stock ? "" : "disabled"}
-            onclick="addToCart('${product.id}')"
-          >Add to cart</button>
+            onclick="addToCart('${product.id}')">
+            Add to cart
+          </button>
 
           <button class="heart"
             onclick="toggleWish('${product.id}')"
@@ -156,8 +198,7 @@ function renderShop() {
     document.getElementById("search")?.value || ""
   ).trim().toLowerCase();
 
-  const filter =
-    document.getElementById("filter")?.value || "all";
+  const filter = document.getElementById("filter")?.value || "all";
 
   let list = products.filter(p =>
     p.name.toLowerCase().includes(query)
@@ -218,7 +259,6 @@ function addToCart(id) {
   saveCart();
   renderCart();
   updateCartBadge();
-
   notify(product.name + " added to your cart!");
 }
 
@@ -243,7 +283,6 @@ function removeItem(id) {
   saveCart();
   renderCart();
   updateCartBadge();
-
   notify("Card removed from cart.");
 }
 
@@ -274,7 +313,7 @@ function renderCart() {
             <strong>${p.name}</strong>
             <p>${money(p.price)} each</p>
             <button class="btn secondary"
-                    onclick="removeItem('${id}')">Remove</button>
+              onclick="removeItem('${id}')">Remove</button>
           </div>
 
           <label class="small">
@@ -294,7 +333,6 @@ function renderCart() {
   const shipping = sub === 0 || sub >= 1500 ? 0 : 99;
   const total = sub + shipping;
 
-  // Support common total IDs used by the cart page.
   setText("subtotal", money(sub));
   setText("shipping", money(shipping));
   setText("grand-total", money(total));
@@ -304,7 +342,6 @@ function renderCart() {
 
 /* ==========================================
    CHECKOUT
-   Save order, clear cart, launch tracker.
    ========================================== */
 
 function checkout() {
@@ -330,19 +367,17 @@ function checkout() {
     status: "Order confirmed"
   };
 
-  // Save a checkout record for this browser tab.
   sessionStorage.setItem(ORDER_KEY, JSON.stringify(order));
 
-  // Clear the cart after the simulated checkout.
   cart = {};
   saveCart();
 
-  // Go directly to the tracker.
   window.location.href = "tracker.html?start=1";
 }
 
 /* ==========================================
-   DISCOUNT PAGE HELPER
+   DISCOUNTS
+   Note: coupons are demo-only.
    ========================================== */
 
 function copyCoupon(code) {
@@ -396,7 +431,6 @@ function notify(message) {
 
 /* ==========================================
    FIXED DELIVERY MAP
-   One route. No random map generation.
    ========================================== */
 
 let raceTimer = null;
@@ -426,6 +460,24 @@ function svgEl(tag, attrs) {
   return element;
 }
 
+function positionMarker(ids, x, y) {
+  let marker = null;
+
+  for (const id of ids) {
+    marker = document.getElementById(id);
+    if (marker) break;
+  }
+
+  if (!marker) return;
+
+  if (marker.tagName.toLowerCase() === "text") {
+    marker.setAttribute("x", x);
+    marker.setAttribute("y", y);
+  } else {
+    marker.setAttribute("transform", `translate(${x} ${y})`);
+  }
+}
+
 function buildFixedMap() {
   const roads = document.getElementById("map-roads");
   const parks = document.getElementById("map-parks");
@@ -438,7 +490,6 @@ function buildFixedMap() {
   parks.replaceChildren();
   buildings.replaceChildren();
 
-  // Fixed green spaces.
   [
     [30, 190, 95, 45],
     [220, 35, 70, 35],
@@ -451,7 +502,6 @@ function buildFixedMap() {
     }));
   });
 
-  // Roads align with the delivery route.
   [60, 190, 330, 470, 610, 740].forEach(x => {
     roads.appendChild(svgEl("path", {
       d: `M${x} 25 V415`,
@@ -470,7 +520,6 @@ function buildFixedMap() {
     }));
   });
 
-  // Static decorative buildings.
   [
     [100, 35], [235, 100], [235, 185],
     [370, 35], [370, 290], [520, 185],
@@ -478,39 +527,36 @@ function buildFixedMap() {
     [100, 285], [235, 300], [370, 100]
   ].forEach(([x, y], i) => {
     buildings.appendChild(svgEl("rect", {
-      x, y, width: 25 + (i % 3) * 7,
+      x,
+      y,
+      width: 25 + (i % 3) * 7,
       height: 20 + (i % 2) * 9,
-      rx: 3, fill: "#35465a"
+      rx: 3,
+      fill: "#35465a"
     }));
   });
 
-  const d = routePoints.map(([x, y], i) =>
-    `${i === 0 ? "M" : "L"}${x} ${y}`
-  ).join(" ");
-
-  route.setAttribute("d", d);
+  route.setAttribute(
+    "d",
+    routePoints.map(([x, y], i) =>
+      `${i === 0 ? "M" : "L"}${x} ${y}`
+    ).join(" ")
+  );
 
   const [sx, sy] = routePoints[0];
   const [ex, ey] = routePoints[routePoints.length - 1];
 
-  const store = document.getElementById("store-pin");
-  const house = document.getElementById("house-pin");
+  positionMarker(["store-marker", "store-pin"], sx, sy - 24);
+  positionMarker(["destination-marker", "house-pin"], ex - 5, ey - 24);
+
   const car = document.getElementById("delivery-car");
 
-  if (store) {
-    store.setAttribute("x", sx);
-    store.setAttribute("y", sy - 24);
-  }
-
-  if (house) {
-    house.setAttribute("x", ex - 5);
-    house.setAttribute("y", ey - 24);
-  }
-
   if (car) {
-    car.setAttribute("text-anchor", "middle");
-    car.setAttribute("dominant-baseline", "central");
-    placeCarAt(0);
+    if (car.tagName.toLowerCase() === "text") {
+      car.setAttribute("text-anchor", "middle");
+      car.setAttribute("dominant-baseline", "central");
+    }
+    placeCarAt(raceProgress);
   }
 
   setText("city-name", "EVFORGE Delivery District");
@@ -519,13 +565,12 @@ function buildFixedMap() {
   setText("delivery-status", "Ready");
 
   const progress = document.getElementById("delivery-progress");
-  if (progress) progress.style.width = "0%";
+  if (progress) progress.style.width = (raceProgress * 100) + "%";
 
   setText("delivery-message", "Route confirmed. Waiting for checkout.");
 
   return true;
 }
-
 
 function placeCarAt(progress) {
   const route = document.getElementById("car-route");
@@ -538,9 +583,6 @@ function placeCarAt(progress) {
 
   const distance = Math.max(0, Math.min(1, progress)) * length;
   const point = route.getPointAtLength(distance);
-
-  // Sample a little farther along the route to determine
-  // the direction the car should face.
   const sampleDistance = Math.min(length, distance + 2);
   const next = route.getPointAtLength(sampleDistance);
 
@@ -549,24 +591,22 @@ function placeCarAt(progress) {
     next.x - point.x
   ) * 180 / Math.PI;
 
-  // At the destination, retain the direction of the final road.
   if (distance >= length - 0.01) {
     const previous = route.getPointAtLength(Math.max(0, length - 2));
+
     angle = Math.atan2(
       point.y - previous.y,
       point.x - previous.x
     ) * 180 / Math.PI;
   }
 
-  // The SVG car is drawn facing right.
-  // Translate it to the road, then rotate it to match the route.
   car.setAttribute(
     "transform",
     `translate(${point.x} ${point.y}) rotate(${angle})`
   );
 }
+
 function startRace() {
-  // No checkout record means no tracker access.
   if (!hasOrder()) {
     window.location.replace("shop.html");
     return;
@@ -574,7 +614,6 @@ function startRace() {
 
   const route = document.getElementById("car-route");
   if (!route || !route.getTotalLength()) return;
-
   if (raceTimer) return;
 
   if (raceProgress >= 1) {
@@ -596,6 +635,7 @@ function startRace() {
     placeCarAt(raceProgress);
 
     const remaining = length * (1 - raceProgress);
+
     setText("speed", raceProgress >= 1 ? "0" : "120");
     setText("distance", (remaining / length * 12.4).toFixed(1));
 
@@ -609,7 +649,10 @@ function startRace() {
       setText("speed", "0");
       setText("distance", "0.0");
       setText("delivery-status", "Delivered 🏁");
-      setText("delivery-message", "Your simulated delivery has reached its destination!");
+      setText(
+        "delivery-message",
+        "Your simulated delivery has reached its destination!"
+      );
 
       if (startButton) startButton.disabled = false;
 
@@ -636,13 +679,12 @@ function pauseRace() {
 function initTracker() {
   if (!document.getElementById("delivery-map")) return;
 
-  // Block direct visits before checkout.
   if (!hasOrder()) {
     window.location.replace("shop.html");
     return;
   }
 
-  buildFixedMap();
+  if (!buildFixedMap()) return;
 
   const order = readJSON(sessionStorage, ORDER_KEY, null);
 
@@ -657,19 +699,18 @@ function initTracker() {
   const params = new URLSearchParams(location.search);
 
   if (params.get("start") === "1") {
-    // Remove the start parameter from the address bar.
     history.replaceState({}, "", location.pathname);
-
     setTimeout(startRace, 700);
   }
 }
 
 /* ==========================================
-   INITIALISE
+   INITIALISE ALL PAGE FEATURES
    ========================================== */
 
 function init() {
   setupNav();
+  lockTrackerLinks();
   renderShop();
   renderFeatured();
   renderCart();

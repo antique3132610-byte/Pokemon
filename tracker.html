@@ -4,106 +4,231 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>EVFORGE | Discounts</title>
+
+  <title>EVFORGE | Turbo Tracker</title>
+
   <link rel="stylesheet" href="style.css">
-  <script src="app.js" defer></script>
+
+  <!-- Load the latest version of the shared website script -->
+  <script src="app.js?v=3" defer></script>
 </head>
 
 <body>
   <header id="site-nav"></header>
 
   <main class="wrap section">
-    <div class="eyebrow">LIMITED-TIME-STYLE OFFERS</div>
 
-    <h1>THE DEAL <span>GARAGE.</span></h1>
+    <div class="eyebrow">EVFORGE TURBO LOGISTICS</div>
 
-    <p>Explore our sample coupons and special offers.</p>
+    <h1>TURBO <span>TRACKER.</span></h1>
 
-    <div class="deals">
+    <p>
+      Your delivery is following its confirmed route.
+      Start your engines!
+    </p>
 
-      <article class="deal">
-        <div class="deal-icon">🎴</div>
-        <span class="badge">CARD COLLECTORS</span>
-        <h2>10% OFF</h2>
-        <p>Sample offer on eligible card orders.</p>
+    <div class="map-head panel">
+      <div>
+        <span class="small">DELIVERY DISTRICT</span>
+        <h2 id="city-name">EVFORGE Delivery District</h2>
+      </div>
 
-        <div class="coupon">
-          <code>FORGE10</code>
-          <button class="btn"
-            onclick="copyCoupon('FORGE10')">
-            Copy code
-          </button>
+      <div>
+        <span class="small">ROUTE</span>
+        <h3>Store → Destination</h3>
+      </div>
+    </div>
+
+    <!-- Delivery map -->
+    <div class="mapbox">
+      <svg
+        id="delivery-map"
+        viewBox="0 0 800 440"
+        role="img"
+        aria-label="A supercar travelling along a simulated delivery route"
+      >
+        <rect width="800" height="440" fill="#14251f"/>
+
+        <g id="map-parks"></g>
+        <g id="map-roads"></g>
+        <g id="map-buildings"></g>
+
+        <path
+          id="car-route"
+          d=""
+          fill="none"
+          stroke="#ffd400"
+          stroke-width="7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-dasharray="10 8"
+        />
+
+        <text
+          id="store-pin"
+          x="60"
+          y="56"
+          font-size="28"
+          text-anchor="middle"
+        >🏬</text>
+
+        <text
+          id="house-pin"
+          x="735"
+          y="336"
+          font-size="28"
+          text-anchor="middle"
+        >🏁</text>
+
+        <text
+          id="delivery-car"
+          x="60"
+          y="80"
+          font-size="30"
+          text-anchor="middle"
+          dominant-baseline="central"
+        >🏎️</text>
+      </svg>
+    </div>
+
+    <!-- Live delivery statistics -->
+    <div class="stats">
+
+      <div class="panel">
+        <div class="small">SIMULATED SPEED</div>
+        <div class="metric">
+          <span id="speed">0</span> km/h
         </div>
+      </div>
 
-        <a class="btn secondary" href="shop.html">
-          Shop cards →
-        </a>
-      </article>
-
-      <article class="deal">
-        <div class="deal-icon">🏎️</div>
-        <span class="badge">TURBO CLUB</span>
-        <h2>FREE DELIVERY</h2>
-        <p>Sample offer on orders of ₹1,500 or more.</p>
-
-        <div class="coupon">
-          <code>TURBOFREE</code>
-          <button class="btn"
-            onclick="copyCoupon('TURBOFREE')">
-            Copy code
-          </button>
+      <div class="panel">
+        <div class="small">DISTANCE LEFT</div>
+        <div class="metric">
+          <span id="distance">12.4</span> km
         </div>
+      </div>
 
-        <a class="btn secondary" href="shop.html">
-          Build your cart →
-        </a>
-      </article>
-
-      <article class="deal">
-        <div class="deal-icon">⚡</div>
-        <span class="badge">NEW TRAINERS</span>
-        <h2>5% OFF</h2>
-        <p>A sample introductory offer for collectors.</p>
-
-        <div class="coupon">
-          <code>NEWTRAINER</code>
-          <button class="btn"
-            onclick="copyCoupon('NEWTRAINER')">
-            Copy code
-          </button>
-        </div>
-
-        <a class="btn secondary" href="tracker.html">
-          Start collecting →
-        </a>
-      </article>
+      <div class="panel">
+        <div class="small">DELIVERY STATUS</div>
+        <h2 id="delivery-status">Order confirmed</h2>
+      </div>
 
     </div>
 
+    <!-- Delivery progress -->
     <div class="panel section">
-      <h2>One more stop?</h2>
 
-      <p>
-        Your supercar is waiting to deliver your imaginary
-        order at a frankly irresponsible speed.
+      <div class="progress">
+        <div id="delivery-progress"></div>
+      </div>
+
+      <p id="delivery-message">
+        Preparing your delivery route...
       </p>
 
-      <a
-        class="btn"
-        id="discount-tracker-link"
-        href="shop.html"
-      >
-        🔒 Unlock Turbo Tracker after checkout →
-      </a>
+      <div class="actions">
+        <button
+          class="btn"
+          id="start-btn"
+          onclick="startRace()"
+        >
+          🏁 Resume delivery
+        </button>
+
+        <button
+          class="btn secondary"
+          onclick="pauseRace()"
+        >
+          ⏸ Pause
+        </button>
+      </div>
+
+    </div>
+
+    <div class="panel">
+      <h2>Delivery details</h2>
+
+      <p>
+        Order ID:
+        <strong id="tracker-order-id">Loading...</strong>
+      </p>
+
+      <p>
+        Items:
+        <strong id="tracker-item-count">Loading...</strong>
+      </p>
+
+      <p>
+        Order total:
+        <strong id="tracker-order-total">Loading...</strong>
+      </p>
     </div>
 
     <p class="small">
-      These are demo promotions. Copying a coupon does not apply
-      a discount to checkout. Real discount validation requires
-      additional checkout logic.
+      This is a demonstration only. Speed, distance, route and
+      delivery status are simulated. No real payment or courier
+      service is connected.
     </p>
+
+    <a class="btn secondary" href="shop.html">
+      ← Return to Shop
+    </a>
+
   </main>
 
-  <footer>EVFORGE Deal Garage · Sample promotions</footer>
+  <footer>
+    EVFORGE Turbo Logistics · Simulation mode
+  </footer>
+
+  <!-- Display saved demo-order details -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      try {
+        const orderKey = "evforgeDelivery";
+
+        const savedOrder =
+          localStorage.getItem(orderKey) ||
+          sessionStorage.getItem(orderKey);
+
+        if (!savedOrder) {
+          return;
+        }
+
+        const order = JSON.parse(savedOrder);
+
+        const orderId = document.getElementById(
+          "tracker-order-id"
+        );
+
+        const itemCount = document.getElementById(
+          "tracker-item-count"
+        );
+
+        const orderTotal = document.getElementById(
+          "tracker-order-total"
+        );
+
+        if (orderId) {
+          orderId.textContent = order.orderId || "Demo order";
+        }
+
+        if (itemCount) {
+          itemCount.textContent =
+            order.itemCount ?? "Not available";
+        }
+
+        if (orderTotal) {
+          const total = Number(order.total);
+
+          orderTotal.textContent = Number.isFinite(total)
+            ? "₹" + total.toLocaleString("en-IN")
+            : "Not available";
+        }
+      } catch (error) {
+        console.error("Could not display order details:", error);
+      }
+    });
+  </script>
+
 </body>
 </html>

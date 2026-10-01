@@ -106,6 +106,7 @@ function setupNav() {
   `;
 }
 
+
 function lockTrackerLinks() {
   document.querySelectorAll("a[href]").forEach(link => {
     let url;
@@ -118,28 +119,11 @@ function lockTrackerLinks() {
 
     if (!url.pathname.endsWith("/tracker.html")) return;
 
-    // Remove the old tracker card from the homepage.
-    if (
-      location.pathname.endsWith("/index.html") ||
-      location.pathname.endsWith("/Pokemon/")
-    ) {
-      const card = link.closest("article");
-      if (card) card.remove();
-      else link.remove();
-      return;
-    }
-
-    // Prevent access before demo checkout.
-    if (!hasOrder()) {
-      link.href = "shop.html";
-      link.textContent = "🔒 Continue to shop";
-    }
+    // Keep the tracker link available on all pages.
+    // The tracker page itself checks whether an order exists.
+    link.href = "tracker.html";
+    link.textContent = "🏁 Turbo Tracker";
   });
-}
-
-function updateCartBadge() {
-  setupNav();
-  lockTrackerLinks();
 }
 
 /* ==========================================

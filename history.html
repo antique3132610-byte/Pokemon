@@ -1,0 +1,362 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EVFORGE | Order History</title>
+  <link rel="stylesheet" href="style.css?v=6">
+
+  <style>
+    body {
+      background: #080c15;
+      color: #f4f7fb;
+    }
+
+    .history-wrap {
+      width: min(1100px, 92%);
+      margin: 32px auto 60px;
+    }
+
+    .history-note {
+      color: #aab7c9;
+      line-height: 1.6;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .order-card {
+      background: #111a29;
+      border: 1px solid #29364a;
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .order-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .order-id {
+      color: #ffd400;
+      font-weight: 900;
+      font-size: 18px;
+    }
+
+    .order-meta {
+      color: #aab7c9;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+
+    .order-status {
+      padding: 6px 10px;
+      border-radius: 99px;
+      background: #233528;
+      color: #80f0ad;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .order-items {
+      margin: 16px 0;
+      padding-left: 20px;
+      color: #dce4ef;
+      line-height: 1.8;
+    }
+
+    .order-total {
+      font-size: 20px;
+      color: #ffd400;
+      font-weight: 900;
+    }
+
+    .empty {
+      margin-top: 24px;
+      padding: 28px;
+      border: 1px dashed #40516b;
+      border-radius: 16px;
+      text-align: center;
+      color: #aab7c9;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .actions button,
+    .actions a {
+      border: 0;
+      border-radius: 9px;
+      padding: 11px 15px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .primary {
+      background: #ffd400;
+      color: #111;
+    }
+
+    .secondary {
+      background: #263448;
+      color: #fff;
+    }
+
+    .danger {
+      background: #54232b;
+      color: #ffd9de;
+    }
+
+    .small-note {
+      font-size: 12px;
+      color: #8998ad;
+      margin-top: 22px;
+    }
+  </style>
+</head>
+
+<body>
+  <nav id="site-nav"></nav>
+
+  <main class="history-wrap">
+    <p style="color:#ffd400;font-weight:bold">
+      ⚡ EVFORGE ACCOUNT
+    </p>
+
+    <h1>📦 Order History</h1>
+
+    <p class="history-note">
+      Review your previous demo orders, including their
+      items, totals, and order dates. Records are saved
+      in this browser only.
+    </p>
+
+    <div class="actions">
+      <a class="primary" href="shop.html">
+        Shop Pokémon Cards
+      </a>
+
+      <button class="secondary" id="refresh-history" type="button">
+        Refresh history
+      </button>
+
+      <button class="danger" id="clear-history" type="button">
+        Clear history
+      </button>
+    </div>
+
+    <div id="history-list" class="history-list" aria-live="polite"></div>
+
+    <p class="small-note">
+      Demo only: orders are stored in this browser's local
+      storage. Clearing browser data can remove them.
+      This is not a real account or server-backed database.
+    </p>
+  </main>
+
+  <script src="app.js?v=6" defer></script>
+
+  <script>
+    (() => {
+      const KEY = "evforgeOrderHistory";
+      const CURRENT_KEY = "evforgeDelivery";
+
+      const money = amount =>
+        "₹" + Number(amount || 0).toLocaleString("en-IN");
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        })[char]);
+      }
+
+      function getHistory() {
+        try {
+          const history = JSON.parse(
+            localStorage.getItem(KEY) || "[]"
+          );
+
+          return Array.isArray(history) ? history : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function renderHistory() {
+        const host = document.getElementById("history-list");
+        const history = getHistory();
+
+        host.innerHTML = "";
+
+        if (!history.length) {
+          host.innerHTML = `
+            <div class="empty">
+              <h2>No saved orders yet</h2>
+              <p>
+                Your demo orders will appear here after
+                you complete checkout.
+              </p>
+            </div>
+          `;
+          return;
+        }
+
+        history.forEach(order => {
+          const date = order.createdAt
+            ? new Date(order.createdAt)
+            : null;
+
+          const dateText =
+            date && !Number.isNaN(date.getTime())
+              ? date.toLocaleString()
+              : "Date unavailable";
+
+          const items = Array.isArray(order.items)
+            ? order.items
+            : [];
+
+          const itemHTML = items.length
+            ? items.map(item => `
+                <li>
+                  ${escapeHTML(item.name || item.id || "Card")}
+                  × ${Math.max(0, Number(item.quantity) || 0)}
+                  <span style="color:#aab7c9">
+                    (${money(
+                      (Number(item.price) || 0) *
+                      (Number(item.quantity) || 0)
+                    )})
+                  </span>
+                </li>
+              `).join("")
+            : "<li>Item details unavailable</li>";
+
+          const card = document.createElement("article");
+          card.className = "order-card";
+
+          card.innerHTML = `
+            <div class="order-top">
+              <div>
+                <div class="order-id">
+                  ${escapeHTML(order.orderId || "Demo order")}
+                </div>
+
+                <div class="order-meta">
+                  ${escapeHTML(dateText)}
+                </div>
+              </div>
+
+              <span class="order-status">
+                ${escapeHTML(order.status || "Order confirmed")}
+              </span>
+            </div>
+
+            <p>
+              Customer:
+              <strong>
+                ${escapeHTML(order.customer?.name || "Demo customer")}
+              </strong>
+              · City:
+              ${escapeHTML(order.customer?.city || "Not provided")}
+            </p>
+
+            <ul class="order-items">${itemHTML}</ul>
+
+            <div class="order-top">
+              <span class="order-meta">
+                ${Math.max(
+                  0,
+                  Number(order.itemCount) ||
+                  items.reduce(
+                    (n, item) =>
+                      n + (Number(item.quantity) || 0),
+                    0
+                  )
+                )} card(s)
+              </span>
+
+              <span class="order-total">
+                Total: ${money(order.total)}
+              </span>
+            </div>
+
+            <div class="actions">
+              <button class="secondary view-order" type="button">
+                Set as current demo order
+              </button>
+            </div>
+          `;
+
+          card.querySelector(".view-order").addEventListener(
+            "click",
+            () => {
+              try {
+                localStorage.setItem(
+                  CURRENT_KEY,
+                  JSON.stringify(order)
+                );
+
+                localStorage.setItem(
+                  "evforgeRaceProgress",
+                  "0"
+                );
+
+                sessionStorage.removeItem(
+                  "evforgeSmsVerified"
+                );
+
+                alert(
+                  "This order is now your current demo order. " +
+                  "Complete demo verification to open Turbo Tracker."
+                );
+
+                location.href = "sms.html";
+              } catch {
+                alert(
+                  "Could not load this saved order in the browser."
+                );
+              }
+            }
+          );
+
+          host.appendChild(card);
+        });
+      }
+
+      document
+        .getElementById("refresh-history")
+        .addEventListener("click", renderHistory);
+
+      document
+        .getElementById("clear-history")
+        .addEventListener("click", () => {
+          if (!confirm(
+            "Delete all saved demo order history from this browser? " +
+            "This cannot be undone."
+          )) {
+            return;
+          }
+
+          localStorage.removeItem(KEY);
+          renderHistory();
+        });
+
+      renderHistory();
+    })();
+  </script>
+</body>
+</html>

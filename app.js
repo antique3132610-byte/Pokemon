@@ -273,49 +273,55 @@ function removeItem(id) {
   notify("Card removed from cart.");
 }
 
+
 function renderCart() {
   const host = document.getElementById("cart-items");
-  if (!host) return;
 
-  const entries = Object.entries(cart).filter(([id, quantity]) =>
-    products.some(p => p.id === id) && Number(quantity) > 0
-  );
+  // Only display cart items if this page has a cart-items area.
+  if (host) {
+    const entries = Object.entries(cart).filter(([id, quantity]) =>
+      products.some(p => p.id === id) && Number(quantity) > 0
+    );
 
-  if (!entries.length) {
-    host.innerHTML = `
-      <div class="empty">
-        Your cart is empty. Head to PokéMart to find cards!
-      </div>
-    `;
-  } else {
-    host.innerHTML = entries.map(([id, quantity]) => {
-      const p = products.find(item => item.id === id);
-
-      return `
-        <div class="cart-row">
-          <img src="${p.image}" alt="${p.name}"
-               onerror="this.style.display='none'">
-
-          <div class="grow">
-            <strong>${p.name}</strong>
-            <p>${money(p.price)} each</p>
-            <button class="btn secondary"
-              onclick="removeItem('${id}')">Remove</button>
-          </div>
-
-          <label class="small">
-            Qty
-            <input type="number" min="1" max="20"
-              value="${quantity}"
-              onchange="changeQty('${id}', this.value)">
-          </label>
-
-          <strong>${money(p.price * quantity)}</strong>
+    if (!entries.length) {
+      host.innerHTML = `
+        <div class="empty">
+          Your cart is empty. Head to PokéMart to find cards!
         </div>
       `;
-    }).join("");
+    } else {
+      host.innerHTML = entries.map(([id, quantity]) => {
+        const p = products.find(item => item.id === id);
+
+        return `
+          <div class="cart-row">
+            <img src="${p.image}" alt="${p.name}"
+              onerror="this.style.display='none'">
+
+            <div class="grow">
+              <strong>${p.name}</strong>
+              <p>${money(p.price)} each</p>
+              <button class="btn secondary"
+                onclick="removeItem('${id}')">
+                Remove
+              </button>
+            </div>
+
+            <label class="small">
+              Qty
+              <input type="number" min="1" max="20"
+                value="${quantity}"
+                onchange="changeQty('${id}', this.value)">
+            </label>
+
+            <strong>${money(p.price * quantity)}</strong>
+          </div>
+        `;
+      }).join("");
+    }
   }
 
+  // These calculations run on BOTH the cart and checkout pages.
   const sub = subtotal();
   const shipping = sub === 0 || sub >= 1500 ? 0 : 99;
   const total = sub + shipping;
@@ -326,7 +332,6 @@ function renderCart() {
   setText("cart-total", money(total));
   setText("cart-count", cartCount());
 }
-
 /* ==========================================
    DEMO CHECKOUT
    ========================================== */

@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EVFORGE | Demo SMS Verification</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #17243a, #080b13 65%);
+      color: #f5f7fb;
+    }
+
+    .card {
+      width: min(100%, 440px);
+      padding: 32px;
+      border: 1px solid #29364a;
+      border-radius: 22px;
+      background: #101827;
+      box-shadow: 0 20px 60px #0008;
+    }
+
+    .logo {
+      font-size: 23px;
+      font-weight: 900;
+      color: #ffd400;
+      letter-spacing: 1px;
+    }
+
+    h1 {
+      margin: 22px 0 8px;
+      font-size: 28px;
+    }
+
+    p {
+      color: #b8c2d1;
+      line-height: 1.6;
+    }
+
+    label {
+      display: block;
+      margin: 22px 0 8px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px;
+      border-radius: 11px;
+      border: 1px solid #40516b;
+      background: #080d17;
+      color: white;
+      font-size: 24px;
+      letter-spacing: 8px;
+      text-align: center;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 15px;
+      border: 0;
+      border-radius: 11px;
+      background: #ffd400;
+      color: #111;
+      font-weight: 900;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .hint {
+      padding: 12px;
+      border-radius: 10px;
+      background: #1d2939;
+      color: #ffd400;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    #message {
+      min-height: 24px;
+      color: #ff9da8;
+    }
+
+    .small {
+      font-size: 12px;
+      color: #8d9bb0;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <div class="logo">⚡ EVFORGE</div>
+
+    <h1>Verify your demo order</h1>
+
+    <p>
+      Enter the demo verification code to continue
+      to Turbo Tracker.
+    </p>
+
+    <div class="hint">Demo code: 999999</div>
+
+    <form id="sms-form">
+      <label for="sms-code">6-digit verification code</label>
+
+      <input
+        id="sms-code"
+        name="sms-code"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="6"
+        pattern="[0-9]{6}"
+        required
+      >
+
+      <button type="submit">
+        Verify and track delivery →
+      </button>
+    </form>
+
+    <p id="message" role="status"></p>
+
+    <p class="small">
+      This is a website demo. It does not send a real SMS.
+    </p>
+  </main>
+
+  <script>
+    const orderKey = "evforgeDelivery";
+
+    if (
+      !localStorage.getItem(orderKey) &&
+      !sessionStorage.getItem(orderKey)
+    ) {
+      window.location.replace("shop.html");
+    }
+
+    document
+      .getElementById("sms-form")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const code = document
+          .getElementById("sms-code")
+          .value.trim();
+
+        const message = document.getElementById("message");
+
+        if (code !== "999999") {
+          message.textContent =
+            "Incorrect code. Please enter 999999.";
+          return;
+        }
+
+        sessionStorage.setItem(
+          "evforgeSmsVerified",
+          "yes"
+        );
+
+        window.location.href = "tracker.html";
+      });
+  </script>
+</body>
+</html>

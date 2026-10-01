@@ -1,7 +1,8 @@
 
 /* ==========================================
    EVFORGE APP
-   Shop + Wishlist + Cart + Checkout + Tracker
+   Shop + Wishlist + Cart + Demo Checkout
+   + Fixed Turbo Tracker
    ========================================== */
 
 const products = [
@@ -37,6 +38,10 @@ function hasOrder() {
   return Boolean(sessionStorage.getItem(ORDER_KEY));
 }
 
+function getOrder() {
+  return readJSON(sessionStorage, ORDER_KEY, null);
+}
+
 function saveCart() {
   localStorage.setItem(CART_KEY, JSON.stringify(cart));
 }
@@ -65,7 +70,8 @@ function setText(id, value) {
 }
 
 /* ==========================================
-   NAVIGATION AND TRACKER ACCESS
+   NAVIGATION
+   Tracker is intentionally not in the nav.
    ========================================== */
 
 function setupNav() {
@@ -77,14 +83,9 @@ function setupNav() {
   const links = [
     ["Home", "index.html"],
     ["PokéMart", "shop.html"],
-    ["Discounts", "discounts.html"]
+    ["Discounts", "discounts.html"],
+    ["Cart 🛒 " + cartCount(), "cart.html"]
   ];
-
-  if (hasOrder()) {
-    links.push(["Turbo Tracker 🏁", "tracker.html"]);
-  }
-
-  links.push(["Cart 🛒 " + cartCount(), "cart.html"]);
 
   nav.innerHTML = `
     <a class="brand" href="index.html">⚡ EV<span>FORGE</span></a>
@@ -98,8 +99,6 @@ function setupNav() {
 }
 
 function lockTrackerLinks() {
-  const unlocked = hasOrder();
-
   document.querySelectorAll("a[href]").forEach(link => {
     let url;
 
@@ -109,33 +108,21 @@ function lockTrackerLinks() {
       return;
     }
 
-    const isTracker = url.pathname.endsWith("/tracker.html");
-    const isSpecialButton =
-      link.id === "home-tracker-link" ||
-      link.id === "discount-tracker-link";
+    if (!url.pathname.endsWith("/tracker.html")) return;
 
-    if (!isTracker && !isSpecialButton) return;
-
-    if (unlocked) {
-      link.href = "tracker.html";
-
-      if (link.id === "discount-tracker-link") {
-        link.textContent = "🏁 Open Turbo Tracker →";
-      } else if (link.id === "home-tracker-link") {
-        link.textContent = "Start tracker →";
-      }
-
+    // Remove the old tracker card from the homepage.
+    if (location.pathname.endsWith("/index.html") ||
+        location.pathname.endsWith("/Pokemon/")) {
+      const card = link.closest("article");
+      if (card) card.remove();
+      else link.remove();
       return;
     }
 
-    link.href = "shop.html";
-
-    if (link.id === "home-tracker-link") {
-      link.textContent = "Unlock after checkout →";
-    } else if (link.id === "discount-tracker-link") {
-      link.textContent = "🔒 Unlock Turbo Tracker after checkout →";
-    } else if (!link.closest("#site-nav")) {
-      link.textContent = "🔒 Unlock after checkout";
+    // Prevent access before demo checkout.
+    if (!hasOrder()) {
+      link.href = "shop.html";
+      link.textContent = "🔒 Continue to shop";
     }
   });
 }
@@ -243,7 +230,7 @@ function toggleWish(id) {
 }
 
 /* ==========================================
-   SHOPPING CART
+   CART
    ========================================== */
 
 function addToCart(id) {
@@ -341,43 +328,102 @@ function renderCart() {
 }
 
 /* ==========================================
-   CHECKOUT
+   DEMO CHECKOUT
    ========================================== */
 
 function checkout() {
-  const message = document.getElementById("checkout-message");
-
   if (cartCount() === 0) {
-    if (message) {
-      message.textContent = "Your cart is empty!";
-    } else {
-      notify("Your cart is empty!");
-    }
+    const message = document.getElementById("checkout-message");
+
+    if (message) message.textContent = "Your cart is empty!";
+    else notify("Your cart is empty!");
+
     return;
   }
+
+  window.location.href = "checkout.html";
+}
+
+function submitDemoCheckout(event) {
+  event.preventDefault();
+
+  const form = document.getElementById("demo-checkout-form");
+  const message = document.getElementById("checkout-message");
+
+  if (!form || !form.reportValidity()) return;
+
+  if (cartCount() === 0) {
+    if (message) message.textContent = "Your cart is empty. Please shop first.";
+    notify("Your cart is empty!");
+    window.location.href = "shop.html";
+    return;
+  }
+
+  const getValue = id =>
+    document.getElementById(id)?.value.trim() || "";
+
+  const customer = {
+    name: getValue("customer-name"),
+    email: getValue("customer-email"),
+    phone: getValue("customer-phone"),
+    alternatePhone: getValue("customer-alt-phone"),
+    address: getValue("customer-address"),
+    apartment: getValue("customer-address2"),
+    landmark: getValue("customer-landmark"),
+    city: getValue("customer-city"),
+    state: getValue("customer-state"),
+    postalCode: getValue("customer-postal"),
+    country: getValue("customer-country"),
+    preferredDeliveryTime: getValue("delivery-time"),
+    deliveryInstructions: getValue("delivery-instructions"),
+    safePlaceAllowed:
+      document.getElementById("safe-place")?.checked || false
+  };
 
   const sub = subtotal();
   const shipping = sub >= 1500 ? 0 : 99;
 
+  const items = Object.entries(cart).map(([id, quantity]) => {
+    const p = products.find(product => product.id === id);
+
+    return {
+      id,
+      name: p?.name || id,
+      price: p?.price || 0,
+      quantity: Number(quantity) || 0
+    };
+  });
+
   const order = {
     orderId: "EVF-" + Date.now().toString().slice(-8),
     total: sub + shipping,
-    items: cartCount(),
+    subtotal: sub,
+    shipping,
+    items,
+    itemCount: cartCount(),
     createdAt: new Date().toISOString(),
-    status: "Order confirmed"
+    status: "Order confirmed",
+    customer
   };
 
-  sessionStorage.setItem(ORDER_KEY, JSON.stringify(order));
-
-  cart = {};
-  saveCart();
+  try {
+    sessionStorage.setItem(ORDER_KEY, JSON.stringify(order));
+    cart = {};
+    saveCart();
+  } catch (error) {
+    if (message) {
+      message.textContent =
+        "Could not save your demo order. Please try again.";
+    }
+    return;
+  }
 
   window.location.href = "tracker.html?start=1";
 }
 
 /* ==========================================
-   DISCOUNTS
-   Note: coupons are demo-only.
+   COUPONS
+   Copy-only demo. No discount is applied.
    ========================================== */
 
 function copyCoupon(code) {
@@ -430,7 +476,7 @@ function notify(message) {
 }
 
 /* ==========================================
-   FIXED DELIVERY MAP
+   FIXED TURBO TRACKER MAP
    ========================================== */
 
 let raceTimer = null;
@@ -553,9 +599,12 @@ function buildFixedMap() {
 
   if (car) {
     if (car.tagName.toLowerCase() === "text") {
+      car.setAttribute("x", "0");
+      car.setAttribute("y", "0");
       car.setAttribute("text-anchor", "middle");
       car.setAttribute("dominant-baseline", "central");
     }
+
     placeCarAt(raceProgress);
   }
 
@@ -564,10 +613,10 @@ function buildFixedMap() {
   setText("distance", "12.4");
   setText("delivery-status", "Ready");
 
-  const progress = document.getElementById("delivery-progress");
-  if (progress) progress.style.width = (raceProgress * 100) + "%";
+  const bar = document.getElementById("delivery-progress");
+  if (bar) bar.style.width = (raceProgress * 100) + "%";
 
-  setText("delivery-message", "Route confirmed. Waiting for checkout.");
+  setText("delivery-message", "Your demo order is being prepared.");
 
   return true;
 }
@@ -583,8 +632,7 @@ function placeCarAt(progress) {
 
   const distance = Math.max(0, Math.min(1, progress)) * length;
   const point = route.getPointAtLength(distance);
-  const sampleDistance = Math.min(length, distance + 2);
-  const next = route.getPointAtLength(sampleDistance);
+  const next = route.getPointAtLength(Math.min(length, distance + 2));
 
   let angle = Math.atan2(
     next.y - point.y,
@@ -626,12 +674,11 @@ function startRace() {
   setText("delivery-status", "On the way");
   setText("delivery-message", "Your EVFORGE delivery car is on the road!");
 
-  const startButton = document.getElementById("start-btn");
-  if (startButton) startButton.disabled = true;
+  const button = document.getElementById("start-btn");
+  if (button) button.disabled = true;
 
   raceTimer = setInterval(() => {
     raceProgress = Math.min(1, raceProgress + 0.0025);
-
     placeCarAt(raceProgress);
 
     const remaining = length * (1 - raceProgress);
@@ -649,14 +696,11 @@ function startRace() {
       setText("speed", "0");
       setText("distance", "0.0");
       setText("delivery-status", "Delivered 🏁");
-      setText(
-        "delivery-message",
-        "Your simulated delivery has reached its destination!"
-      );
+      setText("delivery-message", "Your simulated delivery has arrived!");
 
-      if (startButton) startButton.disabled = false;
+      if (button) button.disabled = false;
 
-      notify("Delivery complete! 🏁");
+      notify("Demo delivery complete! 🏁");
     }
   }, 50);
 }
@@ -667,8 +711,8 @@ function pauseRace() {
     raceTimer = null;
   }
 
-  const startButton = document.getElementById("start-btn");
-  if (startButton) startButton.disabled = false;
+  const button = document.getElementById("start-btn");
+  if (button) button.disabled = false;
 
   if (raceProgress > 0 && raceProgress < 1) {
     setText("delivery-status", "Paused");
@@ -677,7 +721,8 @@ function pauseRace() {
 }
 
 function initTracker() {
-  if (!document.getElementById("delivery-map")) return;
+  const map = document.getElementById("delivery-map");
+  if (!map) return;
 
   if (!hasOrder()) {
     window.location.replace("shop.html");
@@ -686,14 +731,18 @@ function initTracker() {
 
   if (!buildFixedMap()) return;
 
-  const order = readJSON(sessionStorage, ORDER_KEY, null);
+  const order = getOrder();
 
   if (order) {
-    setText("delivery-status", "Order confirmed");
+    setText("delivery-status", order.status || "Order confirmed");
     setText(
       "delivery-message",
       `Order ${order.orderId} confirmed! Preparing your delivery.`
     );
+
+    setText("tracker-order-id", order.orderId);
+    setText("tracker-customer-name", order.customer?.name || "Demo customer");
+    setText("tracker-customer-city", order.customer?.city || "Not provided");
   }
 
   const params = new URLSearchParams(location.search);
@@ -705,7 +754,7 @@ function initTracker() {
 }
 
 /* ==========================================
-   INITIALISE ALL PAGE FEATURES
+   INITIALISE
    ========================================== */
 
 function init() {

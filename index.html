@@ -4,29 +4,204 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EVFORGE | Home</title>
+<title>EVFORGE | Premium Card Collection</title>
 <link rel="stylesheet" href="style.css">
 <script src="app.js" defer></script>
+
+<style>
+/* EVFORGE premium card showcase */
+.card-showcase {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 290px;
+  padding: 20px 10px 35px;
+  overflow: hidden;
+  perspective: 1000px;
+}
+.collectible {
+  position: relative;
+  width: 155px;
+  height: 220px;
+  flex-shrink: 0;
+  border-radius: 15px;
+  padding: 8px;
+  box-sizing: border-box;
+  box-shadow: 0 18px 35px #0009;
+  transition: transform .35s ease;
+}
+.collectible:hover {
+  z-index: 5;
+  transform: translateY(-14px) rotate(0deg) scale(1.07) !important;
+}
+.collectible.gold {
+  background: linear-gradient(135deg,#fff1a8,#d5a52b,#fff0a1,#94650c);
+  transform: rotate(-13deg) translateX(23px);
+  z-index: 1;
+}
+.collectible.blue {
+  background: linear-gradient(135deg,#b7f5ff,#188df4,#073f9b,#75e5ff);
+  transform: rotate(12deg) translateX(-23px);
+  z-index: 2;
+}
+.collectible-inner {
+  height: 100%;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1px solid #ffffff88;
+  background: linear-gradient(145deg,#0c1426,#172b49 65%,#080e1c);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  color: white;
+  overflow: hidden;
+  position: relative;
+}
+.card-label {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #f9df7a;
+  font-weight: 900;
+}
+.card-name {
+  font-size: 17px;
+  line-height: 1.1;
+  margin-top: 7px;
+  font-weight: 900;
+}
+.card-art {
+  flex: 1;
+  margin: 9px 0;
+  border-radius: 7px;
+  border: 1px solid #e9d27899;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 50% 45%,#f7cf6244,transparent 60%),
+    linear-gradient(135deg,#192f4c,#080e1c);
+  font-size: 59px;
+  text-shadow: 0 0 20px #56baff;
+}
+.blue .card-art {
+  border-color: #70dfff;
+  background:
+    radial-gradient(circle at 50% 45%,#1f9eff66,transparent 60%),
+    linear-gradient(135deg,#071b40,#102d50);
+}
+.card-footer {
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+}
+.card-sparkle {
+  position: absolute;
+  right: 10px;
+  top: 42px;
+  color: #fff1a8;
+  font-size: 20px;
+}
+.hero-tagline {
+  color: #f3d46b;
+  letter-spacing: 3px;
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+  margin: 0 auto 15px;
+}
+.hero .small {
+  text-align: center;
+  letter-spacing: 2px;
+}
+.home-tracker {
+  display: inline-block;
+  margin-top: 8px;
+}
+@media (max-width: 480px) {
+  .collectible {
+    width: 132px;
+    height: 195px;
+  }
+  .card-showcase {
+    min-height: 250px;
+  }
+  .card-art {
+    font-size: 48px;
+  }
+}
+</style>
 </head>
+
 <body>
 <header id="site-nav"></header>
+
 <main class="wrap">
   <section class="hero">
     <div class="eyebrow">THE NEXT GENERATION OF COLLECTING</div>
+
     <h1>WELCOME TO<br><span>EVFORGE.</span></h1>
-    <p>Collect rare cards. Unlock deals. Deliver at turbo speed.</p>
+
+    <p>Collect rare cards. Unlock deals. Track every delivery.</p>
+
     <div class="actions">
       <a class="btn" href="shop.html">Explore PokéMart →</a>
       <a class="btn secondary" href="discounts.html">Discover deals</a>
     </div>
-    <div class="supercar">🏎️💨</div>
-    <div class="small">COLLECT DIFFERENT. DRIVE FASTER.</div>
+
+    <div class="card-showcase" aria-label="Gold and blue premium collectible cards">
+      <div class="collectible gold">
+        <div class="collectible-inner">
+          <div class="card-label">EVFORGE · GOLD</div>
+          <div class="card-name">LEGENDARY</div>
+          <div class="card-art">🔥</div>
+          <span class="card-sparkle">✦</span>
+          <div class="card-footer">
+            <span>RARE SERIES</span><span>★ 99</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="collectible blue">
+        <div class="collectible-inner">
+          <div class="card-label">EVFORGE · BLUE</div>
+          <div class="card-name">ELECTRIC</div>
+          <div class="card-art">⚡</div>
+          <span class="card-sparkle">✧</span>
+          <div class="card-footer">
+            <span>ELITE SERIES</span><span>★ 98</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-tagline">GOLD FINISH. ELECTRIC STYLE.</div>
+    <div class="small">COLLECT DIFFERENT. STAND OUT.</div>
   </section>
 
   <section class="stats">
-    <article class="panel"><h2>🎴</h2><h3>PokéMart</h3><p>Find your next favourite card.</p><a href="shop.html">Explore shop →</a></article>
-    <article class="panel"><h2>🎁</h2><h3>Deal Garage</h3><p>Find special offers and coupon codes.</p><a href="discounts.html">View discounts →</a></article>
-    <article class="panel"><h2>🏁</h2><h3>Turbo Delivery</h3><p>Watch a supercar race across random maps.</p><a href="tracker.html">Start tracker →</a></article>
+    <article class="panel">
+      <h2>🎴</h2>
+      <h3>PokéMart</h3>
+      <p>Find your next favourite card.</p>
+      <a href="shop.html">Explore shop →</a>
+    </article>
+
+    <article class="panel">
+      <h2>🎁</h2>
+      <h3>Deal Garage</h3>
+      <p>Find special offers and coupon codes.</p>
+      <a href="discounts.html">View discounts →</a>
+    </article>
+
+    <article class="panel">
+      <h2>📦</h2>
+      <h3>Turbo Delivery</h3>
+      <p>Watch your delivery car follow a fixed road to its destination.</p>
+      <a id="home-tracker-link" class="home-tracker"
+         href="shop.html">Unlock after checkout →</a>
+    </article>
   </section>
 
   <section class="section">
@@ -36,6 +211,7 @@
     <a class="btn" href="shop.html">See all cards →</a>
   </section>
 </main>
+
 <footer>⚡ EVFORGE · Collect. Discover. Deliver.</footer>
 </body>
 </html>

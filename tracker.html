@@ -2,50 +2,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EVFORGE | Turbo Tracker</title>
-<link rel="stylesheet" href="style.css">
-<script src="app.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EVFORGE | Turbo Tracker</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
 </head>
+
 <body>
-<header id="site-nav"></header>
-<main class="wrap section">
-  <div class="eyebrow">EVFORGE TURBO LOGISTICS</div>
-  <h1>TURBO <span>TRACKER.</span></h1>
-  <p>Choose a random map and send the supercar on its delivery mission!</p>
-  <div class="map-head panel">
-    <div><span class="small">CURRENT CITY</span><h2 id="city-name">Neon City</h2></div>
-    <button class="btn secondary" onclick="newMap()">🎲 Random map</button>
-  </div>
-  <div class="mapbox">
-    <svg id="delivery-map" viewBox="0 0 800 440" role="img" aria-label="Random delivery map with animated supercar">
-      <rect width="800" height="440" fill="#14251f"/>
-      <g id="map-parks"></g>
-      <g id="map-roads"></g>
-      <g id="map-buildings"></g>
-      <path id="car-route" d="" fill="none" stroke="#ffd400" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="10 8"/>
-      <text id="store-pin" x="45" y="80" font-size="30">🏬</text>
-      <text id="house-pin" x="720" y="370" font-size="30">🏠</text>
-      <text id="delivery-car" x="50" y="80" font-size="33">🏎️</text>
-    </svg>
-  </div>
-  <div class="stats">
-    <div class="panel"><div class="small">SIMULATED SPEED</div><div class="metric"><span id="speed">0</span> km/h</div></div>
-    <div class="panel"><div class="small">DISTANCE LEFT</div><div class="metric"><span id="distance">12.4</span> km</div></div>
-    <div class="panel"><div class="small">DELIVERY STATUS</div><h2 id="delivery-status">Ready</h2></div>
-  </div>
-  <div class="panel section">
-    <div class="progress"><div id="delivery-progress"></div></div>
-    <p id="delivery-message">Driver ready. Waiting for the green light.</p>
-    <div class="actions">
-      <button class="btn" id="start-btn" onclick="startRace()">🏁 Start delivery</button>
-      <button class="btn secondary" onclick="pauseRace()">⏸ Pause</button>
-      <button class="btn secondary" onclick="newMap()">🔄 New route</button>
+  <header id="site-nav"></header>
+
+  <main class="wrap section">
+    <div class="eyebrow">EVFORGE TURBO LOGISTICS</div>
+
+    <h1>TURBO <span>TRACKER.</span></h1>
+
+    <p>Your delivery is following its confirmed route.</p>
+
+    <div class="map-head panel">
+      <div>
+        <span class="small">DELIVERY DISTRICT</span>
+        <h2 id="city-name">EVFORGE Delivery District</h2>
+      </div>
+
+      <div>
+        <span class="small">ROUTE</span>
+        <h3>Store → Destination</h3>
+      </div>
     </div>
-  </div>
-  <p class="small">This is a game-like simulation. Speed, distance and locations are fictional, not live GPS or courier information.</p>
-</main>
-<footer>EVFORGE Turbo Logistics · Simulation mode</footer>
+
+    <div class="mapbox">
+      <svg
+        id="delivery-map"
+        viewBox="0 0 800 440"
+        role="img"
+        aria-label="A supercar travelling along a fixed delivery route"
+      >
+        <rect width="800" height="440" fill="#14251f"/>
+
+        <g id="map-parks"></g>
+        <g id="map-roads"></g>
+        <g id="map-buildings"></g>
+
+        <path
+          id="car-route"
+          d=""
+          fill="none"
+          stroke="#ffd400"
+          stroke-width="7"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-dasharray="10 8"
+        />
+
+        <text
+          id="store-pin"
+          x="60"
+          y="56"
+          font-size="28"
+          text-anchor="middle"
+        >🏬</text>
+
+        <text
+          id="house-pin"
+          x="735"
+          y="336"
+          font-size="28"
+          text-anchor="middle"
+        >🏁</text>
+
+        <text
+          id="delivery-car"
+          x="60"
+          y="80"
+          font-size="30"
+          text-anchor="middle"
+          dominant-baseline="central"
+        >🏎️</text>
+      </svg>
+    </div>
+
+    <div class="stats">
+      <div class="panel">
+        <div class="small">SIMULATED SPEED</div>
+        <div class="metric">
+          <span id="speed">0</span> km/h
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="small">DISTANCE LEFT</div>
+        <div class="metric">
+          <span id="distance">12.4</span> km
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="small">DELIVERY STATUS</div>
+        <h2 id="delivery-status">Order confirmed</h2>
+      </div>
+    </div>
+
+    <div class="panel section">
+      <div class="progress">
+        <div id="delivery-progress"></div>
+      </div>
+
+      <p id="delivery-message">
+        Preparing your delivery route...
+      </p>
+
+      <div class="actions">
+        <button
+          class="btn"
+          id="start-btn"
+          onclick="startRace()"
+        >🏁 Resume delivery</button>
+
+        <button
+          class="btn secondary"
+          onclick="pauseRace()"
+        >⏸ Pause</button>
+      </div>
+    </div>
+
+    <p class="small">
+      Simulation only. Speed, distance, and delivery status are fictional.
+      No real payment or courier service is connected.
+    </p>
+  </main>
+
+  <footer>EVFORGE Turbo Logistics · Simulation mode</footer>
 </body>
 </html>

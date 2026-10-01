@@ -8,9 +8,90 @@
   <title>EVFORGE | Turbo Tracker</title>
 
   <link rel="stylesheet" href="style.css">
+  <script src="app.js?v=4" defer></script>
 
-  <!-- Load the latest version of the shared website script -->
-  <script src="app.js?v=3" defer></script>
+  <style>
+    .tracker-map {
+      width: 100%;
+      overflow: hidden;
+      border: 1px solid #35465a;
+      border-radius: 16px;
+      background: #14251f;
+      margin: 24px 0;
+    }
+
+    #delivery-map {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .tracker-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .tracker-stat {
+      min-width: 0;
+      padding: 20px;
+      border-radius: 14px;
+      background: #111827;
+      border: 1px solid #35465a;
+    }
+
+    .tracker-stat h2 {
+      overflow-wrap: anywhere;
+      font-size: 1.1rem;
+    }
+
+    .tracker-number {
+      font-size: clamp(1.3rem, 3vw, 2rem);
+      font-weight: 800;
+      color: #ffd400;
+      margin-top: 10px;
+    }
+
+    .tracker-progress {
+      width: 100%;
+      height: 12px;
+      background: #35465a;
+      border-radius: 20px;
+      overflow: hidden;
+      margin: 18px 0;
+    }
+
+    #delivery-progress {
+      height: 100%;
+      width: 0%;
+      background: #ffd400;
+      border-radius: inherit;
+      transition: width 0.15s linear;
+    }
+
+    .tracker-details {
+      padding: 22px;
+      margin-top: 24px;
+    }
+
+    .tracker-details p {
+      overflow-wrap: anywhere;
+    }
+
+    .tracker-label {
+      color: #aab5c5;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 650px) {
+      .tracker-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -23,24 +104,24 @@
     <h1>TURBO <span>TRACKER.</span></h1>
 
     <p>
-      Your delivery is following its confirmed route.
-      Start your engines!
+      Your demo delivery is travelling along its fixed route.
     </p>
 
-    <div class="map-head panel">
-      <div>
-        <span class="small">DELIVERY DISTRICT</span>
-        <h2 id="city-name">EVFORGE Delivery District</h2>
-      </div>
+    <section class="panel">
+      <div class="map-head">
+        <div>
+          <span class="small">DELIVERY DISTRICT</span>
+          <h2 id="city-name">EVFORGE Delivery District</h2>
+        </div>
 
-      <div>
-        <span class="small">ROUTE</span>
-        <h3>Store → Destination</h3>
+        <div>
+          <span class="small">ROUTE</span>
+          <h3>Store → Destination</h3>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Delivery map -->
-    <div class="mapbox">
+    <div class="tracker-map">
       <svg
         id="delivery-map"
         viewBox="0 0 800 440"
@@ -80,6 +161,7 @@
           text-anchor="middle"
         >🏁</text>
 
+        <!-- Car stays upright as it moves along the route -->
         <text
           id="delivery-car"
           x="60"
@@ -91,87 +173,74 @@
       </svg>
     </div>
 
-    <!-- Live delivery statistics -->
-    <div class="stats">
+    <section class="tracker-stats">
 
-      <div class="panel">
-        <div class="small">SIMULATED SPEED</div>
-        <div class="metric">
+      <div class="tracker-stat">
+        <div class="tracker-label">Simulated speed</div>
+        <div class="tracker-number">
           <span id="speed">0</span> km/h
         </div>
       </div>
 
-      <div class="panel">
-        <div class="small">DISTANCE LEFT</div>
-        <div class="metric">
+      <div class="tracker-stat">
+        <div class="tracker-label">Distance remaining</div>
+        <div class="tracker-number">
           <span id="distance">12.4</span> km
         </div>
       </div>
 
-      <div class="panel">
-        <div class="small">DELIVERY STATUS</div>
+      <div class="tracker-stat">
+        <div class="tracker-label">Delivery status</div>
         <h2 id="delivery-status">Order confirmed</h2>
       </div>
 
-    </div>
+    </section>
 
-    <!-- Delivery progress -->
-    <div class="panel section">
+    <section class="panel section">
+      <h2>Delivery progress</h2>
 
-      <div class="progress">
+      <div
+        class="tracker-progress"
+        role="progressbar"
+        aria-label="Simulated delivery progress"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
         <div id="delivery-progress"></div>
       </div>
 
       <p id="delivery-message">
         Preparing your delivery route...
       </p>
+    </section>
 
-      <div class="actions">
-        <button
-          class="btn"
-          id="start-btn"
-          onclick="startRace()"
-        >
-          🏁 Resume delivery
-        </button>
-
-        <button
-          class="btn secondary"
-          onclick="pauseRace()"
-        >
-          ⏸ Pause
-        </button>
-      </div>
-
-    </div>
-
-    <div class="panel">
-      <h2>Delivery details</h2>
+    <section class="panel tracker-details">
+      <h2>Order details</h2>
 
       <p>
-        Order ID:
+        <span class="tracker-label">Order ID</span><br>
         <strong id="tracker-order-id">Loading...</strong>
       </p>
 
       <p>
-        Items:
+        <span class="tracker-label">Items</span><br>
         <strong id="tracker-item-count">Loading...</strong>
       </p>
 
       <p>
-        Order total:
+        <span class="tracker-label">Order total</span><br>
         <strong id="tracker-order-total">Loading...</strong>
       </p>
-    </div>
+    </section>
 
     <p class="small">
-      This is a demonstration only. Speed, distance, route and
-      delivery status are simulated. No real payment or courier
-      service is connected.
+      Simulation only. Speed, distance, route and delivery
+      status are fictional. No real payment or courier service
+      is connected.
     </p>
 
     <a class="btn secondary" href="shop.html">
-      ← Return to Shop
+      ← Return to PokéMart
     </a>
 
   </main>
@@ -180,19 +249,14 @@
     EVFORGE Turbo Logistics · Simulation mode
   </footer>
 
-  <!-- Display saved demo-order details -->
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       try {
-        const orderKey = "evforgeDelivery";
-
         const savedOrder =
-          localStorage.getItem(orderKey) ||
-          sessionStorage.getItem(orderKey);
+          localStorage.getItem("evforgeDelivery") ||
+          sessionStorage.getItem("evforgeDelivery");
 
-        if (!savedOrder) {
-          return;
-        }
+        if (!savedOrder) return;
 
         const order = JSON.parse(savedOrder);
 
@@ -213,8 +277,7 @@
         }
 
         if (itemCount) {
-          itemCount.textContent =
-            order.itemCount ?? "Not available";
+          itemCount.textContent = order.itemCount ?? 0;
         }
 
         if (orderTotal) {
@@ -225,7 +288,7 @@
             : "Not available";
         }
       } catch (error) {
-        console.error("Could not display order details:", error);
+        console.error("Could not load order details:", error);
       }
     });
   </script>

@@ -3,295 +3,258 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>EVFORGE | Turbo Tracker</title>
 
-  <link rel="stylesheet" href="style.css">
-  <script src="app.js?v=4" defer></script>
+  <link rel="stylesheet" href="style.css?v=5">
 
   <style>
-    .tracker-map {
-      width: 100%;
+    body {
+      background: #080c15;
+      color: #f4f7fb;
+    }
+
+    .tracker-wrap {
+      width: min(1100px, 92%);
+      margin: 30px auto 60px;
+    }
+
+    .tracker-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .tracker-head h1 {
+      margin: 0;
+    }
+
+    .tracker-panel {
+      padding: 20px;
+      margin: 18px 0;
+      border: 1px solid #28364a;
+      border-radius: 18px;
+      background: #111a29;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 15px;
+      border-radius: 12px;
+      background: #0a111d;
+    }
+
+    .stat span {
+      display: block;
+      color: #aab7c9;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .stat strong {
+      font-size: 21px;
+      color: #ffd400;
+      overflow-wrap: anywhere;
+    }
+
+    .map-frame {
       overflow: hidden;
-      border: 1px solid #35465a;
-      border-radius: 16px;
-      background: #14251f;
-      margin: 24px 0;
+      border-radius: 14px;
+      background: #0b1320;
     }
 
     #delivery-map {
       display: block;
       width: 100%;
       height: auto;
+      min-height: 240px;
     }
 
-    .tracker-stats {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-      margin: 20px 0;
-    }
-
-    .tracker-stat {
-      min-width: 0;
-      padding: 20px;
-      border-radius: 14px;
-      background: #111827;
-      border: 1px solid #35465a;
-    }
-
-    .tracker-stat h2 {
-      overflow-wrap: anywhere;
-      font-size: 1.1rem;
-    }
-
-    .tracker-number {
-      font-size: clamp(1.3rem, 3vw, 2rem);
-      font-weight: 800;
-      color: #ffd400;
-      margin-top: 10px;
-    }
-
-    .tracker-progress {
-      width: 100%;
+    .progress-track {
       height: 12px;
-      background: #35465a;
-      border-radius: 20px;
+      background: #293548;
+      border-radius: 99px;
       overflow: hidden;
-      margin: 18px 0;
+      margin: 16px 0 10px;
     }
 
     #delivery-progress {
-      height: 100%;
       width: 0%;
+      height: 100%;
       background: #ffd400;
-      border-radius: inherit;
-      transition: width 0.15s linear;
+      transition: width 0.1s linear;
     }
 
-    .tracker-details {
-      padding: 22px;
-      margin-top: 24px;
+    .status {
+      color: #ffd400;
+      font-weight: 800;
     }
 
-    .tracker-details p {
-      overflow-wrap: anywhere;
-    }
-
-    .tracker-label {
-      color: #aab5c5;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    @media (max-width: 650px) {
-      .tracker-stats {
-        grid-template-columns: 1fr;
-      }
+    .back-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #ffd400;
     }
   </style>
 </head>
 
 <body>
-  <header id="site-nav"></header>
+  <nav id="site-nav"></nav>
 
-  <main class="wrap section">
+  <main class="tracker-wrap">
 
-    <div class="eyebrow">EVFORGE TURBO LOGISTICS</div>
+    <div class="tracker-head">
+      <div>
+        <p style="color:#ffd400;margin:0 0 6px">
+          ⚡ EVFORGE DELIVERY SYSTEM
+        </p>
 
-    <h1>TURBO <span>TRACKER.</span></h1>
-
-    <p>
-      Your demo delivery is travelling along its fixed route.
-    </p>
-
-    <section class="panel">
-      <div class="map-head">
-        <div>
-          <span class="small">DELIVERY DISTRICT</span>
-          <h2 id="city-name">EVFORGE Delivery District</h2>
-        </div>
-
-        <div>
-          <span class="small">ROUTE</span>
-          <h3>Store → Destination</h3>
-        </div>
+        <h1>🏁 Turbo Tracker</h1>
       </div>
-    </section>
 
-    <div class="tracker-map">
-      <svg
-        id="delivery-map"
-        viewBox="0 0 800 440"
-        role="img"
-        aria-label="A supercar travelling along a simulated delivery route"
-      >
-        <rect width="800" height="440" fill="#14251f"/>
-
-        <g id="map-parks"></g>
-        <g id="map-roads"></g>
-        <g id="map-buildings"></g>
-
-        <path
-          id="car-route"
-          d=""
-          fill="none"
-          stroke="#ffd400"
-          stroke-width="7"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-dasharray="10 8"
-        />
-
-        <text
-          id="store-pin"
-          x="60"
-          y="56"
-          font-size="28"
-          text-anchor="middle"
-        >🏬</text>
-
-        <text
-          id="house-pin"
-          x="735"
-          y="336"
-          font-size="28"
-          text-anchor="middle"
-        >🏁</text>
-
-        <!-- Car stays upright as it moves along the route -->
-        <text
-          id="delivery-car"
-          x="60"
-          y="80"
-          font-size="30"
-          text-anchor="middle"
-          dominant-baseline="central"
-        >🏎️</text>
-      </svg>
+      <span class="status" id="delivery-status">
+        Preparing route…
+      </span>
     </div>
 
-    <section class="tracker-stats">
+    <section class="tracker-panel">
+      <div class="stats">
 
-      <div class="tracker-stat">
-        <div class="tracker-label">Simulated speed</div>
-        <div class="tracker-number">
-          <span id="speed">0</span> km/h
+        <div class="stat">
+          <span>Order ID</span>
+          <strong id="tracker-order-id">Loading…</strong>
         </div>
-      </div>
 
-      <div class="tracker-stat">
-        <div class="tracker-label">Distance remaining</div>
-        <div class="tracker-number">
-          <span id="distance">12.4</span> km
+        <div class="stat">
+          <span>Customer</span>
+          <strong id="tracker-customer-name">
+            Demo customer
+          </strong>
         </div>
-      </div>
 
-      <div class="tracker-stat">
-        <div class="tracker-label">Delivery status</div>
-        <h2 id="delivery-status">Order confirmed</h2>
-      </div>
+        <div class="stat">
+          <span>Destination city</span>
+          <strong id="tracker-customer-city">
+            Loading…
+          </strong>
+        </div>
 
+        <div class="stat">
+          <span>Speed</span>
+          <strong>
+            <span
+              id="speed"
+              style="display:inline;color:inherit;font-size:inherit"
+            >0</span>
+            km/h
+          </strong>
+        </div>
+
+        <div class="stat">
+          <span>Distance remaining</span>
+          <strong>
+            <span
+              id="distance"
+              style="display:inline;color:inherit;font-size:inherit"
+            >12.4</span>
+            km
+          </strong>
+        </div>
+
+      </div>
     </section>
 
-    <section class="panel section">
-      <h2>Delivery progress</h2>
+    <section class="tracker-panel">
 
-      <div
-        class="tracker-progress"
-        role="progressbar"
-        aria-label="Simulated delivery progress"
-        aria-valuemin="0"
-        aria-valuemax="100"
-      >
+      <div class="tracker-head">
+        <h2 style="margin:0">Live delivery route</h2>
+        <span id="city-name">EVFORGE Delivery District</span>
+      </div>
+
+      <div class="map-frame">
+        <svg
+          id="delivery-map"
+          viewBox="0 0 800 430"
+          role="img"
+          aria-label="Animated demo delivery car moving along a city route"
+        >
+          <rect
+            width="800"
+            height="430"
+            fill="#101d2a"
+          />
+
+          <g id="map-parks"></g>
+          <g id="map-roads"></g>
+          <g id="map-buildings"></g>
+
+          <path
+            id="car-route"
+            d=""
+            fill="none"
+            stroke="#ffd400"
+            stroke-width="5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-dasharray="10 9"
+          />
+
+          <text
+            id="store-pin"
+            x="60"
+            y="55"
+            font-size="25"
+            text-anchor="middle"
+          >🏪</text>
+
+          <text
+            id="house-pin"
+            x="735"
+            y="330"
+            font-size="25"
+            text-anchor="middle"
+          >🏠</text>
+
+          <text
+            id="delivery-car"
+            x="0"
+            y="0"
+            font-size="27"
+            text-anchor="middle"
+            dominant-baseline="central"
+          >🚗</text>
+        </svg>
+      </div>
+
+      <div class="progress-track">
         <div id="delivery-progress"></div>
       </div>
 
-      <p id="delivery-message">
-        Preparing your delivery route...
+      <p id="delivery-message" aria-live="polite">
+        Your demo order is being prepared.
       </p>
+
+      <p style="color:#91a0b5;font-size:13px">
+        This is a simulated delivery animation, not live courier tracking.
+      </p>
+
     </section>
 
-    <section class="panel tracker-details">
-      <h2>Order details</h2>
-
-      <p>
-        <span class="tracker-label">Order ID</span><br>
-        <strong id="tracker-order-id">Loading...</strong>
-      </p>
-
-      <p>
-        <span class="tracker-label">Items</span><br>
-        <strong id="tracker-item-count">Loading...</strong>
-      </p>
-
-      <p>
-        <span class="tracker-label">Order total</span><br>
-        <strong id="tracker-order-total">Loading...</strong>
-      </p>
-    </section>
-
-    <p class="small">
-      Simulation only. Speed, distance, route and delivery
-      status are fictional. No real payment or courier service
-      is connected.
-    </p>
-
-    <a class="btn secondary" href="shop.html">
-      ← Return to PokéMart
+    <a class="back-link" href="shop.html">
+      ← Back to PokéMart
     </a>
 
   </main>
 
-  <footer>
-    EVFORGE Turbo Logistics · Simulation mode
-  </footer>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      try {
-        const savedOrder =
-          localStorage.getItem("evforgeDelivery") ||
-          sessionStorage.getItem("evforgeDelivery");
-
-        if (!savedOrder) return;
-
-        const order = JSON.parse(savedOrder);
-
-        const orderId = document.getElementById(
-          "tracker-order-id"
-        );
-
-        const itemCount = document.getElementById(
-          "tracker-item-count"
-        );
-
-        const orderTotal = document.getElementById(
-          "tracker-order-total"
-        );
-
-        if (orderId) {
-          orderId.textContent = order.orderId || "Demo order";
-        }
-
-        if (itemCount) {
-          itemCount.textContent = order.itemCount ?? 0;
-        }
-
-        if (orderTotal) {
-          const total = Number(order.total);
-
-          orderTotal.textContent = Number.isFinite(total)
-            ? "₹" + total.toLocaleString("en-IN")
-            : "Not available";
-        }
-      } catch (error) {
-        console.error("Could not load order details:", error);
-      }
-    });
-  </script>
-
+  <script src="app.js?v=5" defer></script>
 </body>
 </html>

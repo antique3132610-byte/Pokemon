@@ -657,61 +657,152 @@ function showDelivered() {
   if (bar) bar.style.width = "100%";
 }
 
+
 function startRace() {
   if (!hasOrder()) {
     window.location.replace("shop.html");
     return;
   }
 
-  if (sessionStorage.getItem(VERIFIED_KEY) !== "yes") {
-    window.location.replace("sms.html");
-    return;
-  }
-
   const route = document.getElementById("car-route");
-  if (!route || !route.getTotalLength() || raceTimer) return;
+
+  if (!route || !route.getTotalLength()) return;
+  if (raceTimer) return;
 
   if (raceProgress >= 1) {
-    showDelivered();
+    setText("speed", "0");
+    setText("distance", "0.0");
+    setText("delivery-status", "Delivered 🏁");
+    setText(
+      "delivery-message",
+      "Your simulated delivery has arrived!"
+    );
+
+    const bar = document.getElementById("delivery-progress");
+    if (bar) bar.style.width = "100%";
+
     return;
   }
 
   const length = route.getTotalLength();
 
   setText("delivery-status", "On the way");
-  setText("delivery-message", "Your EVFORGE delivery car is on the road!");
+  setText(
+    "delivery-message",
+    "Your EVFORGE delivery car is on the road!"
+  );
 
   const button = document.getElementById("start-btn");
   if (button) button.disabled = true;
 
-  raceTimer = setInterval(() => {
-    raceProgress = Math.min(1, raceProgress + 0.0025);
+  let speed = 0;
+  let elapsed = 0;
 
-    localStorage.setItem(RACE_KEY, String(raceProgress));
+  const MAX_SPEED = 99;
+  const ACCELERATION = 12;
+  const BRAKING_DISTANCE = 0.08;
+
+  raceTimer = setInterval(() => {
+    elapsed += 0.05;
+
+    const remainingProgress = 1 - raceProgress;
+
+    // Gradually increase speed after starting.
+    const accelerationTarget = Math.min(
+      MAX_SPEED,
+      10 + elapsed * ACCELERATION
+    );
+
+    // Vary the target speed to simulate changing road conditions.
+    const roadSpeed =
+      48 +
+      20 * Math.sin(elapsed * 0.8) +
+      12 * Math.sin(elapsed * 1.7);
+
+    let targetSpeed = Math.min(
+      MAX_SPEED,
+      Math.max(20, Math.round(roadSpeed))
+    );
+
+    // Apply gradual acceleration.
+    targetSpeed = Math.min(targetSpeed, accelerationTarget);
+
+    // Brake progressively as the car approaches its destination.
+    if (remainingProgress < BRAKING_DISTANCE) {
+      const brakingFactor = Math.max(
+        0,
+        remainingProgress / BRAKING_DISTANCE
+      );
+
+      targetSpeed *= brakingFactor;
+    }
+
+    // Smoothly approach the target instead of jumping between speeds.
+    const change = targetSpeed > speed ? 0.8 : 1.5;
+
+    if (speed < targetSpeed) {
+      speed = Math.min(targetSpeed, speed + change);
+    } else {
+      speed = Math.max(targetSpeed, speed - change);
+    }
+
+    // Advance the demo vehicle along the route.
+    // This is a visual simulation, not real GPS-based physics.
+    const progressStep = 0.0025;
+
+    raceProgress = Math.min(
+      1,
+      raceProgress + progressStep
+    );
+
+    localStorage.setItem(
+      "evforgeRaceProgress",
+      String(raceProgress)
+    );
 
     placeCarAt(raceProgress);
 
-    const remaining = length * (1 - raceProgress);
+    const remainingDistance =
+      Math.max(0, 12.4 * (1 - raceProgress));
 
-    setText("speed", raceProgress >= 1 ? "0" : "120");
-    setText("distance", (remaining / length * 12.4).toFixed(1));
+    setText(
+      "speed",
+      raceProgress >= 1
+        ? "0"
+        : String(
+            Math.min(MAX_SPEED, Math.max(1, Math.round(speed)))
+          )
+    );
+
+    setText("distance", remainingDistance.toFixed(1));
 
     const bar = document.getElementById("delivery-progress");
-    if (bar) bar.style.width = (raceProgress * 100) + "%";
 
+    if (bar) {
+      bar.style.width = (raceProgress * 100) + "%";
+    }
+
+    // Stop the car when the delivery is complete.
     if (raceProgress >= 1) {
       clearInterval(raceTimer);
       raceTimer = null;
+      speed = 0;
 
-      showDelivered();
+      setText("speed", "0");
+      setText("distance", "0.0");
+      setText("delivery-status", "Delivered 🏁");
+      setText(
+        "delivery-message",
+        "Your simulated delivery has arrived!"
+      );
 
+      if (bar) bar.style.width = "100%";
       if (button) button.disabled = false;
 
       notify("Demo delivery complete! 🏁");
     }
   }, 50);
 }
-
 function pauseRace() {
   if (raceTimer) {
     clearInterval(raceTimer);

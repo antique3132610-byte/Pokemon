@@ -1,7 +1,8 @@
+
 /* ==========================================
    EVFORGE APP
    Shop + Wishlist + Cart + Demo Checkout
-   + Fixed Turbo Tracker
+   + SMS Demo Verification + Turbo Tracker
    ========================================== */
 
 const products = [
@@ -18,6 +19,8 @@ const products = [
 const CART_KEY = "evforgeCart";
 const ORDER_KEY = "evforgeDelivery";
 const WISH_KEY = "evforgeWishlist";
+const RACE_KEY = "evforgeRaceProgress";
+const VERIFIED_KEY = "evforgeSmsVerified";
 
 const money = amount =>
   "₹" + Number(amount).toLocaleString("en-IN");
@@ -32,11 +35,6 @@ function readJSON(storage, key, fallback) {
 
 let cart = readJSON(localStorage, CART_KEY, {});
 let wishlist = readJSON(localStorage, WISH_KEY, []);
-
-/* ==========================================
-   ORDER STORAGE
-   Checkout and tracker use the same storage.
-   ========================================== */
 
 function hasOrder() {
   return Boolean(
@@ -79,7 +77,6 @@ function setText(id, value) {
 
 /* ==========================================
    NAVIGATION
-   Tracker is intentionally not in the nav.
    ========================================== */
 
 function setupNav() {
@@ -106,7 +103,6 @@ function setupNav() {
   `;
 }
 
-
 function lockTrackerLinks() {
   document.querySelectorAll("a[href]").forEach(link => {
     let url;
@@ -119,8 +115,6 @@ function lockTrackerLinks() {
 
     if (!url.pathname.endsWith("/tracker.html")) return;
 
-    // Keep the tracker link available on all pages.
-    // The tracker page itself checks whether an order exists.
     link.href = "tracker.html";
     link.textContent = "🏁 Turbo Tracker";
   });
@@ -267,10 +261,18 @@ function removeItem(id) {
   notify("Card removed from cart.");
 }
 
+function updateCartBadge() {
+  const count = cartCount();
+
+  setText("cart-count", count);
+
+  const nav = document.getElementById("site-nav");
+  if (nav) setupNav();
+}
+
 function renderCart() {
   const host = document.getElementById("cart-items");
 
-  // Display cart items only on pages with a cart-items area.
   if (host) {
     const entries = Object.entries(cart).filter(([id, quantity]) =>
       products.some(p => p.id === id) && Number(quantity) > 0
@@ -314,7 +316,6 @@ function renderCart() {
     }
   }
 
-  // These calculations run on both cart and checkout pages.
   const sub = subtotal();
   const shipping = sub === 0 || sub >= 1500 ? 0 : 99;
   const total = sub + shipping;
@@ -409,15 +410,15 @@ function submitDemoCheckout(event) {
   };
 
   try {
-    // FIX: Save the order where the tracker can find it.
     localStorage.setItem(ORDER_KEY, JSON.stringify(order));
-
-    // Remove any old session-only copy.
     sessionStorage.removeItem(ORDER_KEY);
 
-    // Clear the cart only after saving the order.
     cart = {};
     saveCart();
+
+    // Every new order starts a new demo delivery.
+    localStorage.setItem(RACE_KEY, "0");
+    sessionStorage.removeItem(VERIFIED_KEY);
   } catch (error) {
     if (message) {
       message.textContent =
@@ -427,8 +428,7 @@ function submitDemoCheckout(event) {
     return;
   }
 
-  // Open the tracker and automatically start the car.
-  window.location.href = "tracker.html?start=1";
+  window.location.href = "sms.html";
 }
 
 /* ==========================================
@@ -486,11 +486,15 @@ function notify(message) {
 }
 
 /* ==========================================
-   FIXED TURBO TRACKER MAP
+   TURBO TRACKER MAP
    ========================================== */
 
 let raceTimer = null;
-let raceProgress = 0;
+
+let raceProgress = Math.max(
+  0,
+  Math.min(1, Number(localStorage.getItem(RACE_KEY)) || 0)
+);
 
 const routePoints = [
   [60, 80],
@@ -607,30 +611,22 @@ function buildFixedMap() {
 
   const car = document.getElementById("delivery-car");
 
-  if (car) {
-    if (car.tagName.toLowerCase() === "text") {
-      car.setAttribute("x", "0");
-      car.setAttribute("y", "0");
-      car.setAttribute("text-anchor", "middle");
-      car.setAttribute("dominant-baseline", "central");
-    }
-
-    placeCarAt(raceProgress);
+  if (car && car.tagName.toLowerCase() === "text") {
+    car.setAttribute("x", "0");
+    car.setAttribute("y", "0");
+    car.setAttribute("text-anchor", "middle");
+    car.setAttribute("dominant-baseline", "central");
   }
 
+  placeCarAt(raceProgress);
+
   setText("city-name", "EVFORGE Delivery District");
-  setText("speed", "0");
-  setText("distance", "12.4");
-  setText("delivery-status", "Ready");
 
   const bar = document.getElementById("delivery-progress");
   if (bar) bar.style.width = (raceProgress * 100) + "%";
 
-  setText("delivery-message", "Your demo order is being prepared.");
-
   return true;
 }
-
 
 function placeCarAt(progress) {
   const route = document.getElementById("car-route");
@@ -641,17 +637,24 @@ function placeCarAt(progress) {
   const length = route.getTotalLength();
   if (!length) return;
 
-  const distance =
-    Math.max(0, Math.min(1, progress)) * length;
-
+  const distance = Math.max(0, Math.min(1, progress)) * length;
   const point = route.getPointAtLength(distance);
 
-  // Move the car without rotating the emoji.
-  // This keeps the car upright throughout the journey.
+  // Move the car while keeping the emoji upright.
   car.setAttribute(
     "transform",
     `translate(${point.x} ${point.y})`
   );
+}
+
+function showDelivered() {
+  setText("speed", "0");
+  setText("distance", "0.0");
+  setText("delivery-status", "Delivered 🏁");
+  setText("delivery-message", "Your simulated delivery has arrived!");
+
+  const bar = document.getElementById("delivery-progress");
+  if (bar) bar.style.width = "100%";
 }
 
 function startRace() {
@@ -660,13 +663,17 @@ function startRace() {
     return;
   }
 
+  if (sessionStorage.getItem(VERIFIED_KEY) !== "yes") {
+    window.location.replace("sms.html");
+    return;
+  }
+
   const route = document.getElementById("car-route");
-  if (!route || !route.getTotalLength()) return;
-  if (raceTimer) return;
+  if (!route || !route.getTotalLength() || raceTimer) return;
 
   if (raceProgress >= 1) {
-    raceProgress = 0;
-    placeCarAt(0);
+    showDelivered();
+    return;
   }
 
   const length = route.getTotalLength();
@@ -679,6 +686,9 @@ function startRace() {
 
   raceTimer = setInterval(() => {
     raceProgress = Math.min(1, raceProgress + 0.0025);
+
+    localStorage.setItem(RACE_KEY, String(raceProgress));
+
     placeCarAt(raceProgress);
 
     const remaining = length * (1 - raceProgress);
@@ -693,10 +703,7 @@ function startRace() {
       clearInterval(raceTimer);
       raceTimer = null;
 
-      setText("speed", "0");
-      setText("distance", "0.0");
-      setText("delivery-status", "Delivered 🏁");
-      setText("delivery-message", "Your simulated delivery has arrived!");
+      showDelivered();
 
       if (button) button.disabled = false;
 
@@ -729,27 +736,33 @@ function initTracker() {
     return;
   }
 
+  // Require demo verification before displaying the tracker.
+  if (sessionStorage.getItem(VERIFIED_KEY) !== "yes") {
+    window.location.replace("sms.html");
+    return;
+  }
+
   if (!buildFixedMap()) return;
 
   const order = getOrder();
 
   if (order) {
-    setText("delivery-status", order.status || "Order confirmed");
-
-    setText(
-      "delivery-message",
-      `Order ${order.orderId} confirmed! Preparing your delivery.`
-    );
-
-    setText("tracker-order-id", order.orderId);
+    setText("tracker-order-id", order.orderId || "Demo order");
     setText("tracker-customer-name", order.customer?.name || "Demo customer");
     setText("tracker-customer-city", order.customer?.city || "Not provided");
   }
 
-  const params = new URLSearchParams(location.search);
+  if (raceProgress >= 1) {
+    showDelivered();
+  } else {
+    setText("delivery-status", raceProgress > 0 ? "Resuming delivery" : "Preparing delivery");
+    setText(
+      "delivery-message",
+      raceProgress > 0
+        ? "Resuming from your saved position."
+        : "Your demo order is being prepared."
+    );
 
-  if (params.get("start") === "1") {
-    history.replaceState({}, "", location.pathname);
     setTimeout(startRace, 700);
   }
 }

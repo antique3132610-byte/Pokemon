@@ -1,4 +1,3 @@
-
 /* ==========================================
    EVFORGE APP
    Shop + Wishlist + Cart + Demo Checkout
@@ -34,12 +33,21 @@ function readJSON(storage, key, fallback) {
 let cart = readJSON(localStorage, CART_KEY, {});
 let wishlist = readJSON(localStorage, WISH_KEY, []);
 
+/* ==========================================
+   ORDER STORAGE
+   Checkout and tracker use the same storage.
+   ========================================== */
+
 function hasOrder() {
-  return Boolean(sessionStorage.getItem(ORDER_KEY));
+  return Boolean(
+    localStorage.getItem(ORDER_KEY) ||
+    sessionStorage.getItem(ORDER_KEY)
+  );
 }
 
 function getOrder() {
-  return readJSON(sessionStorage, ORDER_KEY, null);
+  return readJSON(localStorage, ORDER_KEY, null) ||
+         readJSON(sessionStorage, ORDER_KEY, null);
 }
 
 function saveCart() {
@@ -111,8 +119,10 @@ function lockTrackerLinks() {
     if (!url.pathname.endsWith("/tracker.html")) return;
 
     // Remove the old tracker card from the homepage.
-    if (location.pathname.endsWith("/index.html") ||
-        location.pathname.endsWith("/Pokemon/")) {
+    if (
+      location.pathname.endsWith("/index.html") ||
+      location.pathname.endsWith("/Pokemon/")
+    ) {
       const card = link.closest("article");
       if (card) card.remove();
       else link.remove();
@@ -273,11 +283,10 @@ function removeItem(id) {
   notify("Card removed from cart.");
 }
 
-
 function renderCart() {
   const host = document.getElementById("cart-items");
 
-  // Only display cart items if this page has a cart-items area.
+  // Display cart items only on pages with a cart-items area.
   if (host) {
     const entries = Object.entries(cart).filter(([id, quantity]) =>
       products.some(p => p.id === id) && Number(quantity) > 0
@@ -321,7 +330,7 @@ function renderCart() {
     }
   }
 
-  // These calculations run on BOTH the cart and checkout pages.
+  // These calculations run on both cart and checkout pages.
   const sub = subtotal();
   const shipping = sub === 0 || sub >= 1500 ? 0 : 99;
   const total = sub + shipping;
@@ -332,6 +341,7 @@ function renderCart() {
   setText("cart-total", money(total));
   setText("cart-count", cartCount());
 }
+
 /* ==========================================
    DEMO CHECKOUT
    ========================================== */
@@ -358,7 +368,10 @@ function submitDemoCheckout(event) {
   if (!form || !form.reportValidity()) return;
 
   if (cartCount() === 0) {
-    if (message) message.textContent = "Your cart is empty. Please shop first.";
+    if (message) {
+      message.textContent = "Your cart is empty. Please shop first.";
+    }
+
     notify("Your cart is empty!");
     window.location.href = "shop.html";
     return;
@@ -386,7 +399,7 @@ function submitDemoCheckout(event) {
   };
 
   const sub = subtotal();
-  const shipping = sub >= 1500 ? 0 : 99;
+  const shipping = sub === 0 || sub >= 1500 ? 0 : 99;
 
   const items = Object.entries(cart).map(([id, quantity]) => {
     const p = products.find(product => product.id === id);
@@ -412,7 +425,13 @@ function submitDemoCheckout(event) {
   };
 
   try {
-    sessionStorage.setItem(ORDER_KEY, JSON.stringify(order));
+    // FIX: Save the order where the tracker can find it.
+    localStorage.setItem(ORDER_KEY, JSON.stringify(order));
+
+    // Remove any old session-only copy.
+    sessionStorage.removeItem(ORDER_KEY);
+
+    // Clear the cart only after saving the order.
     cart = {};
     saveCart();
   } catch (error) {
@@ -420,9 +439,11 @@ function submitDemoCheckout(event) {
       message.textContent =
         "Could not save your demo order. Please try again.";
     }
+
     return;
   }
 
+  // Open the tracker and automatically start the car.
   window.location.href = "tracker.html?start=1";
 }
 
@@ -740,6 +761,7 @@ function initTracker() {
 
   if (order) {
     setText("delivery-status", order.status || "Order confirmed");
+
     setText(
       "delivery-message",
       `Order ${order.orderId} confirmed! Preparing your delivery.`

@@ -526,6 +526,7 @@ function buildFixedMap() {
   return true;
 }
 
+
 function placeCarAt(progress) {
   const route = document.getElementById("car-route");
   const car = document.getElementById("delivery-car");
@@ -533,27 +534,37 @@ function placeCarAt(progress) {
   if (!route || !car) return;
 
   const length = route.getTotalLength();
+  if (!length) return;
+
   const distance = Math.max(0, Math.min(1, progress)) * length;
   const point = route.getPointAtLength(distance);
 
-  // Sample a nearby point to determine the direction of travel.
-  const next = route.getPointAtLength(
-    Math.min(length, distance + 1)
-  );
+  // Sample a little farther along the route to determine
+  // the direction the car should face.
+  const sampleDistance = Math.min(length, distance + 2);
+  const next = route.getPointAtLength(sampleDistance);
 
-  const angle = Math.atan2(
+  let angle = Math.atan2(
     next.y - point.y,
     next.x - point.x
   ) * 180 / Math.PI;
 
-  car.setAttribute("x", point.x);
-  car.setAttribute("y", point.y);
+  // At the destination, retain the direction of the final road.
+  if (distance >= length - 0.01) {
+    const previous = route.getPointAtLength(Math.max(0, length - 2));
+    angle = Math.atan2(
+      point.y - previous.y,
+      point.x - previous.x
+    ) * 180 / Math.PI;
+  }
+
+  // The SVG car is drawn facing right.
+  // Translate it to the road, then rotate it to match the route.
   car.setAttribute(
     "transform",
-    `rotate(${angle}, ${point.x}, ${point.y})`
+    `translate(${point.x} ${point.y}) rotate(${angle})`
   );
 }
-
 function startRace() {
   // No checkout record means no tracker access.
   if (!hasOrder()) {

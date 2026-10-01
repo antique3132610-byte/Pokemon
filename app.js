@@ -631,6 +631,7 @@ function buildFixedMap() {
   return true;
 }
 
+
 function placeCarAt(progress) {
   const route = document.getElementById("car-route");
   const car = document.getElementById("delivery-car");
@@ -640,27 +641,16 @@ function placeCarAt(progress) {
   const length = route.getTotalLength();
   if (!length) return;
 
-  const distance = Math.max(0, Math.min(1, progress)) * length;
+  const distance =
+    Math.max(0, Math.min(1, progress)) * length;
+
   const point = route.getPointAtLength(distance);
-  const next = route.getPointAtLength(Math.min(length, distance + 2));
 
-  let angle = Math.atan2(
-    next.y - point.y,
-    next.x - point.x
-  ) * 180 / Math.PI;
-
-  if (distance >= length - 0.01) {
-    const previous = route.getPointAtLength(Math.max(0, length - 2));
-
-    angle = Math.atan2(
-      point.y - previous.y,
-      point.x - previous.x
-    ) * 180 / Math.PI;
-  }
-
+  // Move the car without rotating the emoji.
+  // This keeps the car upright throughout the journey.
   car.setAttribute(
     "transform",
-    `translate(${point.x} ${point.y}) rotate(${angle})`
+    `translate(${point.x} ${point.y})`
   );
 }
 

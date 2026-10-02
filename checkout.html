@@ -109,13 +109,45 @@
         </label>
       </section>
 
-      <section class="panel section">
-        <h2>🛒 Order summary</h2>
+     <section class="panel section">
+  <h2>🛒 Order summary</h2>
 
-        <p>Subtotal: <strong id="subtotal">₹0</strong></p>
-        <p>Shipping: <strong id="shipping">₹0</strong></p>
-        <hr>
-        <h2>Total: <span id="grand-total">₹0</span></h2>
+  <div class="coupon-box">
+    <h3>🎟️ Have a coupon?</h3>
+
+    <div class="coupon-input-row">
+      <input
+        type="text"
+        id="checkout-coupon"
+        placeholder="Enter coupon code"
+        maxlength="30"
+        autocomplete="off"
+      >
+
+      <button
+        class="btn secondary"
+        type="button"
+        onclick="applyCheckoutCoupon()"
+      >
+        Apply
+      </button>
+    </div>
+
+    <p id="coupon-message" class="small" role="status"></p>
+  </div>
+
+  <p>Subtotal: <strong id="subtotal">₹0</strong></p>
+
+  <p>
+    Discount:
+    <strong id="checkout-discount">₹0</strong>
+  </p>
+
+  <p>Shipping: <strong id="shipping">₹0</strong></p>
+
+  <hr>
+
+  <h2>Total: <span id="grand-total">₹0</span></h2>
 
         <p class="small">
           Shipping is free on orders of ₹1,500 or more.

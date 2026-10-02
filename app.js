@@ -1,1825 +1,10 @@
-/* =========================================================
-   EVFORGE ANIMATION SYSTEM
-   App.js only
-   No extra CSS or JS files required
-   ========================================================= */
+/* ==========================================
+   EVFORGE APP
+   Shop + Wishlist + Cart + Coupons
+   + Demo Checkout + Order History
+   + Turbo Tracker
+   ========================================== */
 
-(function () {
-
-  /* ---------------------------------------------------------
-     INJECT ANIMATION STYLES
-     --------------------------------------------------------- */
-
-  const animationStyle =
-    document.createElement("style");
-
-  animationStyle.textContent = `
-    /* PAGE */
-    body.evforge-animations-ready {
-      overflow-x: hidden;
-    }
-
-    main {
-      animation:
-        evforgePageIn
-        .65s
-        cubic-bezier(.16,1,.3,1)
-        both;
-    }
-
-    @keyframes evforgePageIn {
-      from {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-
-    /* NAVIGATION */
-
-    nav {
-      animation:
-        evforgeNavIn
-        .65s
-        cubic-bezier(.16,1,.3,1)
-        both;
-    }
-
-    @keyframes evforgeNavIn {
-      from {
-        opacity: 0;
-        transform: translateY(-18px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    nav a {
-      transition:
-        color .2s ease,
-        transform .2s ease,
-        text-shadow .2s ease;
-    }
-
-    nav a:hover {
-      transform: translateY(-2px);
-    }
-
-    .brand {
-      transition:
-        transform .25s ease,
-        text-shadow .25s ease;
-    }
-
-    .brand:hover {
-      transform: scale(1.04);
-      text-shadow:
-        0 0 8px rgba(255,212,0,.6),
-        0 0 22px rgba(255,212,0,.3);
-    }
-
-
-    /* HERO */
-
-    .evforge-hero-animated {
-      animation:
-        evforgeHeroIn
-        .9s
-        cubic-bezier(.16,1,.3,1)
-        both;
-    }
-
-    .evforge-hero-animated h1 {
-      animation:
-        evforgeTitleIn
-        .85s
-        cubic-bezier(.16,1,.3,1)
-        .08s
-        both;
-    }
-
-    .evforge-hero-animated p {
-      animation:
-        evforgeFadeUp
-        .7s
-        ease
-        .2s
-        both;
-    }
-
-    .evforge-hero-animated button,
-    .evforge-hero-animated .btn,
-    .evforge-hero-animated a {
-      animation:
-        evforgeFadeUp
-        .7s
-        ease
-        .3s
-        both;
-    }
-
-    @keyframes evforgeHeroIn {
-      from {
-        opacity: 0;
-        transform: scale(.985);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes evforgeTitleIn {
-      from {
-        opacity: 0;
-        transform:
-          translateY(25px)
-          scale(.97);
-      }
-
-      to {
-        opacity: 1;
-        transform:
-          translateY(0)
-          scale(1);
-      }
-    }
-
-    @keyframes evforgeFadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-
-    /* PRODUCT CARDS */
-
-    .evforge-product-animation {
-      animation:
-        evforgeProductIn
-        .55s
-        cubic-bezier(.16,1,.3,1)
-        both;
-
-      transition:
-        transform .25s ease,
-        box-shadow .25s ease,
-        border-color .25s ease,
-        filter .25s ease;
-    }
-
-    .evforge-product-animation:hover {
-      transform:
-        translateY(-8px)
-        scale(1.015);
-
-      box-shadow:
-        0 15px 35px rgba(0,0,0,.35),
-        0 0 22px rgba(255,212,0,.14);
-    }
-
-    .evforge-product-animation img {
-      transition:
-        transform .35s
-        cubic-bezier(.16,1,.3,1),
-        filter .35s ease;
-    }
-
-    .evforge-product-animation:hover img {
-      transform:
-        scale(1.06)
-        translateY(-3px);
-
-      filter:
-        drop-shadow(
-          0 8px 15px
-          rgba(0,0,0,.35)
-        );
-    }
-
-    @keyframes evforgeProductIn {
-      from {
-        opacity: 0;
-        transform:
-          translateY(25px)
-          scale(.96);
-      }
-
-      to {
-        opacity: 1;
-        transform:
-          translateY(0)
-          scale(1);
-      }
-    }
-
-
-    /* RARE / HOLO SHINE */
-
-    .evforge-holo {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .evforge-holo::after {
-      content: "";
-      position: absolute;
-      top: -40%;
-      left: -80%;
-      width: 45%;
-      height: 180%;
-
-      background:
-        linear-gradient(
-          105deg,
-          transparent 0%,
-          rgba(255,255,255,.04) 35%,
-          rgba(255,255,255,.65) 50%,
-          rgba(255,255,255,.04) 65%,
-          transparent 100%
-        );
-
-      transform:
-        skewX(-20deg);
-
-      pointer-events: none;
-
-      opacity: 0;
-    }
-
-    .evforge-holo:hover::after {
-      opacity: 1;
-
-      animation:
-        evforgeCardShine
-        .8s
-        ease
-        both;
-    }
-
-    @keyframes evforgeCardShine {
-      from {
-        left: -80%;
-      }
-
-      to {
-        left: 140%;
-      }
-    }
-
-
-    /* BADGES */
-
-    .evforge-rare-badge {
-      animation:
-        evforgeBadgePulse
-        2.2s
-        ease-in-out
-        infinite;
-    }
-
-    @keyframes evforgeBadgePulse {
-      0%,
-      100% {
-        filter:
-          drop-shadow(
-            0 0 0
-            rgba(255,212,0,0)
-          );
-      }
-
-      50% {
-        filter:
-          drop-shadow(
-            0 0 7px
-            rgba(255,212,0,.45)
-          );
-      }
-    }
-
-
-    /* BUTTONS */
-
-    .evforge-button-animated {
-      position: relative;
-      overflow: hidden;
-
-      transition:
-        transform .18s ease,
-        box-shadow .18s ease;
-    }
-
-    .evforge-button-animated:hover {
-      transform:
-        translateY(-2px)
-        scale(1.015);
-    }
-
-    .evforge-button-animated:active {
-      transform:
-        translateY(1px)
-        scale(.97);
-    }
-
-
-    /* RIPPLE */
-
-    .evforge-ripple {
-      position: fixed;
-
-      width: 10px;
-      height: 10px;
-
-      border-radius: 50%;
-
-      pointer-events: none;
-
-      background:
-        rgba(255,212,0,.65);
-
-      transform:
-        translate(-50%,-50%)
-        scale(1);
-
-      animation:
-        evforgeRipple
-        .55s
-        ease-out
-        forwards;
-
-      z-index: 100000;
-    }
-
-    @keyframes evforgeRipple {
-      from {
-        opacity: .7;
-        transform:
-          translate(-50%,-50%)
-          scale(1);
-      }
-
-      to {
-        opacity: 0;
-        transform:
-          translate(-50%,-50%)
-          scale(12);
-      }
-    }
-
-
-    /* ADD TO CART PARTICLES */
-
-    .evforge-particle {
-      position: fixed;
-
-      width: 7px;
-      height: 7px;
-
-      border-radius: 50%;
-
-      pointer-events: none;
-
-      background:
-        #ffd400;
-
-      z-index: 100001;
-
-      animation:
-        evforgeParticle
-        .65s
-        cubic-bezier(.16,1,.3,1)
-        forwards;
-    }
-
-    @keyframes evforgeParticle {
-      from {
-        opacity: 1;
-        transform:
-          translate(0,0)
-          scale(1);
-      }
-
-      to {
-        opacity: 0;
-        transform:
-          translate(
-            var(--dx),
-            var(--dy)
-          )
-          scale(.15);
-      }
-    }
-
-
-    /* WISHLIST */
-
-    .evforge-wishlist-pop {
-      animation:
-        evforgeWishlistPop
-        .45s
-        cubic-bezier(.16,1,.3,1);
-    }
-
-    @keyframes evforgeWishlistPop {
-      0% {
-        transform: scale(1);
-      }
-
-      35% {
-        transform: scale(1.45);
-      }
-
-      65% {
-        transform: scale(.85);
-      }
-
-      100% {
-        transform: scale(1);
-      }
-    }
-
-
-    /* CART */
-
-    .evforge-cart-animation {
-      animation:
-        evforgeCartIn
-        .5s
-        cubic-bezier(.16,1,.3,1)
-        both;
-    }
-
-    @keyframes evforgeCartIn {
-      from {
-        opacity: 0;
-        transform:
-          translateX(35px)
-          scale(.97);
-      }
-
-      to {
-        opacity: 1;
-        transform:
-          translateX(0)
-          scale(1);
-      }
-    }
-
-
-    /* CART BADGE */
-
-    .evforge-cart-bounce {
-      animation:
-        evforgeCartBounce
-        .5s
-        cubic-bezier(.16,1,.3,1);
-    }
-
-    @keyframes evforgeCartBounce {
-      0% {
-        transform: scale(1);
-      }
-
-      35% {
-        transform: scale(1.25);
-      }
-
-      65% {
-        transform: scale(.9);
-      }
-
-      100% {
-        transform: scale(1);
-      }
-    }
-
-
-    /* SEARCH / FILTER */
-
-    .evforge-filter-animation {
-      animation:
-        evforgeFilter
-        .35s
-        cubic-bezier(.16,1,.3,1)
-        both;
-    }
-
-    @keyframes evforgeFilter {
-      from {
-        opacity: .35;
-        transform:
-          translateY(8px)
-          scale(.985);
-      }
-
-      to {
-        opacity: 1;
-        transform:
-          translateY(0)
-          scale(1);
-      }
-    }
-
-
-    /* PRICE */
-
-    .evforge-price-flash {
-      animation:
-        evforgePriceFlash
-        .55s
-        ease;
-    }
-
-    @keyframes evforgePriceFlash {
-      0% {
-        transform: scale(1);
-      }
-
-      35% {
-        transform: scale(1.12);
-      }
-
-      100% {
-        transform: scale(1);
-      }
-    }
-
-
-    /* TRACKER */
-
-    .evforge-tracker-active {
-      animation:
-        evforgeTrackerGlow
-        1.8s
-        ease-in-out
-        infinite;
-    }
-
-    @keyframes evforgeTrackerGlow {
-      0%,
-      100% {
-        filter:
-          drop-shadow(
-            0 0 0
-            rgba(255,212,0,0)
-          );
-      }
-
-      50% {
-        filter:
-          drop-shadow(
-            0 0 10px
-            rgba(255,212,0,.25)
-          );
-      }
-    }
-
-
-    /* TRACKER CAR */
-
-    #delivery-car {
-      transition:
-        filter .2s ease;
-    }
-
-    .evforge-car-fast {
-      filter:
-        drop-shadow(
-          0 0 8px
-          rgba(255,212,0,.8)
-        );
-    }
-
-
-    /* SPEED LINES */
-
-    .evforge-speed-line {
-      position: fixed;
-
-      width: 45px;
-      height: 2px;
-
-      background:
-        linear-gradient(
-          90deg,
-          transparent,
-          rgba(255,212,0,.8)
-        );
-
-      pointer-events: none;
-
-      z-index: 9998;
-
-      animation:
-        evforgeSpeedLine
-        .45s
-        linear
-        forwards;
-    }
-
-    @keyframes evforgeSpeedLine {
-      from {
-        opacity: .8;
-        transform:
-          translateX(0)
-          scaleX(.5);
-      }
-
-      to {
-        opacity: 0;
-        transform:
-          translateX(-70px)
-          scaleX(1);
-      }
-    }
-
-
-    /* DELIVERY COMPLETE */
-
-    .evforge-delivered {
-      animation:
-        evforgeDelivered
-        .8s
-        cubic-bezier(.16,1,.3,1);
-    }
-
-    @keyframes evforgeDelivered {
-      0% {
-        transform: scale(1);
-      }
-
-      35% {
-        transform: scale(1.08);
-      }
-
-      65% {
-        transform: scale(.97);
-      }
-
-      100% {
-        transform: scale(1);
-      }
-    }
-
-
-    /* CONFETTI */
-
-    .evforge-confetti {
-      position: fixed;
-
-      width: 8px;
-      height: 12px;
-
-      pointer-events: none;
-
-      z-index: 100002;
-
-      animation:
-        evforgeConfetti
-        1.6s
-        cubic-bezier(.15,.8,.25,1)
-        forwards;
-    }
-
-    @keyframes evforgeConfetti {
-      from {
-        opacity: 1;
-
-        transform:
-          translate(0,0)
-          rotate(0deg);
-      }
-
-      to {
-        opacity: 0;
-
-        transform:
-          translate(
-            var(--cx),
-            var(--cy)
-          )
-          rotate(
-            var(--rotation)
-          );
-      }
-    }
-
-
-    /* REDUCED MOTION */
-
-    @media (
-      prefers-reduced-motion: reduce
-    ) {
-
-      *,
-      *::before,
-      *::after {
-        animation-duration:
-          .01ms !important;
-
-        animation-iteration-count:
-          1 !important;
-
-        transition-duration:
-          .01ms !important;
-      }
-    }
-  `;
-
-  document.head.appendChild(
-    animationStyle
-  );
-
-
-  /* ---------------------------------------------------------
-     UTILITY
-     --------------------------------------------------------- */
-
-  function addClassOnce(
-    element,
-    className
-  ) {
-
-    if (!element) {
-      return;
-    }
-
-    element.classList.add(
-      className
-    );
-  }
-
-
-  function removeAndReplay(
-    element,
-    className
-  ) {
-
-    if (!element) {
-      return;
-    }
-
-    element.classList.remove(
-      className
-    );
-
-    void element.offsetWidth;
-
-    element.classList.add(
-      className
-    );
-  }
-
-
-  /* ---------------------------------------------------------
-     HERO ANIMATION
-     --------------------------------------------------------- */
-
-  function animateHeroes() {
-
-    document
-      .querySelectorAll(
-        ".hero, .hero-section, .home-hero, .hero-content"
-      )
-      .forEach(hero => {
-
-        addClassOnce(
-          hero,
-          "evforge-hero-animated"
-        );
-
-      });
-  }
-
-
-  /* ---------------------------------------------------------
-     PRODUCT ANIMATION
-     --------------------------------------------------------- */
-
-  function animateProducts() {
-
-    const productsOnPage =
-      document.querySelectorAll(
-        ".product"
-      );
-
-    productsOnPage
-      .forEach(
-        (card, index) => {
-
-          addClassOnce(
-            card,
-            "evforge-product-animation"
-          );
-
-          card.style.animationDelay =
-            Math.min(
-              index * 0.055,
-              0.45
-            ) + "s";
-
-
-          const badge =
-            card.querySelector(
-              ".badge"
-            );
-
-          if (badge) {
-
-            const text =
-              badge.textContent
-                .trim()
-                .toLowerCase();
-
-            if (
-              text.includes("rare") ||
-              text.includes("holo")
-            ) {
-
-              addClassOnce(
-                badge,
-                "evforge-rare-badge"
-              );
-
-              addClassOnce(
-                card,
-                "evforge-holo"
-              );
-            }
-          }
-        }
-      );
-  }
-
-
-  /* ---------------------------------------------------------
-     CART ANIMATION
-     --------------------------------------------------------- */
-
-  function animateCart() {
-
-    document
-      .querySelectorAll(
-        ".cart-row"
-      )
-      .forEach(
-        (row, index) => {
-
-          addClassOnce(
-            row,
-            "evforge-cart-animation"
-          );
-
-          row.style.animationDelay =
-            Math.min(
-              index * 0.07,
-              0.35
-            ) + "s";
-        }
-      );
-  }
-
-
-  /* ---------------------------------------------------------
-     BUTTON ANIMATION
-     --------------------------------------------------------- */
-
-  function animateButtons() {
-
-    document
-      .querySelectorAll(
-        "button, .btn, .primary, .secondary"
-      )
-      .forEach(
-        button => {
-
-          addClassOnce(
-            button,
-            "evforge-button-animated"
-          );
-
-        }
-      );
-  }
-
-
-  /* ---------------------------------------------------------
-     RIPPLE EFFECT
-     --------------------------------------------------------- */
-
-  function createRipple(
-    x,
-    y
-  ) {
-
-    const ripple =
-      document.createElement(
-        "div"
-      );
-
-    ripple.className =
-      "evforge-ripple";
-
-    ripple.style.left =
-      x + "px";
-
-    ripple.style.top =
-      y + "px";
-
-    document.body.appendChild(
-      ripple
-    );
-
-    setTimeout(
-      () => ripple.remove(),
-      600
-    );
-  }
-
-
-  document.addEventListener(
-    "click",
-    event => {
-
-      const button =
-        event.target.closest(
-          "button, .btn, a"
-        );
-
-      if (!button) {
-        return;
-      }
-
-      createRipple(
-        event.clientX,
-        event.clientY
-      );
-
-    }
-  );
-
-
-  /* ---------------------------------------------------------
-     ADD TO CART PARTICLES
-     --------------------------------------------------------- */
-
-  function createCartParticles(
-    source
-  ) {
-
-    if (!source) {
-      return;
-    }
-
-    const rect =
-      source.getBoundingClientRect();
-
-    const startX =
-      rect.left +
-      rect.width / 2;
-
-    const startY =
-      rect.top +
-      rect.height / 2;
-
-
-    for (
-      let i = 0;
-      i < 9;
-      i++
-    ) {
-
-      const particle =
-        document.createElement(
-          "div"
-        );
-
-      particle.className =
-        "evforge-particle";
-
-      particle.style.left =
-        startX + "px";
-
-      particle.style.top =
-        startY + "px";
-
-      const angle =
-        Math.random() *
-        Math.PI *
-        2;
-
-      const distance =
-        35 +
-        Math.random() * 70;
-
-      particle.style.setProperty(
-        "--dx",
-        Math.cos(angle) *
-        distance +
-        "px"
-      );
-
-      particle.style.setProperty(
-        "--dy",
-        Math.sin(angle) *
-        distance +
-        "px"
-      );
-
-      document.body.appendChild(
-        particle
-      );
-
-      setTimeout(
-        () => particle.remove(),
-        700
-      );
-    }
-  }
-
-
-  /* ---------------------------------------------------------
-     WISHLIST EFFECT
-     --------------------------------------------------------- */
-
-  function animateWishlist() {
-
-    document
-      .querySelectorAll(
-        ".heart"
-      )
-      .forEach(
-        heart => {
-
-          heart.addEventListener(
-            "click",
-            () => {
-
-              removeAndReplay(
-                heart,
-                "evforge-wishlist-pop"
-              );
-
-            }
-          );
-
-        }
-      );
-  }
-
-
-  /* ---------------------------------------------------------
-     CART BADGE EFFECT
-     --------------------------------------------------------- */
-
-  function animateCartBadge() {
-
-    const links =
-      document.querySelectorAll(
-        "nav a"
-      );
-
-    links.forEach(
-      link => {
-
-        if (
-          link.textContent
-            .includes("Cart")
-        ) {
-
-          removeAndReplay(
-            link,
-            "evforge-cart-bounce"
-          );
-
-        }
-
-      }
-    );
-  }
-
-
-  /* ---------------------------------------------------------
-     FILTER / SEARCH EFFECT
-     --------------------------------------------------------- */
-
-  function animateFilterResults() {
-
-    const hosts =
-      document.querySelectorAll(
-        "#shop-products, #products, #featured-products"
-      );
-
-    hosts.forEach(
-      host => {
-
-        removeAndReplay(
-          host,
-          "evforge-filter-animation"
-        );
-
-      }
-    );
-  }
-
-
-  /* ---------------------------------------------------------
-     PRICE ANIMATION
-     --------------------------------------------------------- */
-
-  function animatePrices() {
-
-    document
-      .querySelectorAll(
-        ".price, #subtotal, #discount, #shipping, #grand-total, #cart-total"
-      )
-      .forEach(
-        price => {
-
-          removeAndReplay(
-            price,
-            "evforge-price-flash"
-          );
-
-        }
-      );
-  }
-
-
-  /* ---------------------------------------------------------
-     TRACKER SPEED EFFECTS
-     --------------------------------------------------------- */
-
-  let lastSpeed =
-    -1;
-
-  let lastTrailTime =
-    0;
-
-
-  function trackerSpeedEffect() {
-
-    const speedElement =
-      document.getElementById(
-        "speed"
-      );
-
-    const car =
-      document.getElementById(
-        "delivery-car"
-      );
-
-    if (
-      !speedElement ||
-      !car
-    ) {
-      return;
-    }
-
-    const speed =
-      Number(
-        speedElement.textContent
-          .replace(
-            /[^0-9.]/g,
-            ""
-          )
-      ) || 0;
-
-
-    if (
-      speed ===
-      lastSpeed
-    ) {
-      return;
-    }
-
-    lastSpeed =
-      speed;
-
-
-    car.classList.toggle(
-      "evforge-car-fast",
-      speed >= 70
-    );
-
-
-    if (
-      speed >= 70 &&
-      Date.now() -
-      lastTrailTime >
-      180
-    ) {
-
-      createSpeedLine();
-
-      lastTrailTime =
-        Date.now();
-    }
-  }
-
-
-  function createSpeedLine() {
-
-    const car =
-      document.getElementById(
-        "delivery-car"
-      );
-
-    if (!car) {
-      return;
-    }
-
-    const svg =
-      document.getElementById(
-        "delivery-map"
-      );
-
-    if (!svg) {
-      return;
-    }
-
-    const rect =
-      svg.getBoundingClientRect();
-
-    const line =
-      document.createElement(
-        "div"
-      );
-
-    line.className =
-      "evforge-speed-line";
-
-    const x =
-      rect.left +
-      rect.width *
-      (0.2 +
-        Math.random() *
-        0.6);
-
-    const y =
-      rect.top +
-      rect.height *
-      (0.3 +
-        Math.random() *
-        0.4);
-
-    line.style.left =
-      x + "px";
-
-    line.style.top =
-      y + "px";
-
-    document.body.appendChild(
-      line
-    );
-
-    setTimeout(
-      () => line.remove(),
-      500
-    );
-  }
-
-
-  /* ---------------------------------------------------------
-     TRACKER COMPLETE EFFECT
-     --------------------------------------------------------- */
-
-  let deliveryCelebrated =
-    false;
-
-
-  function checkDeliveryStatus() {
-
-    const status =
-      document.getElementById(
-        "delivery-status"
-      );
-
-    if (!status) {
-      return;
-    }
-
-    const text =
-      status.textContent
-        .trim()
-        .toLowerCase();
-
-
-    if (
-      text.includes("delivered") &&
-      !deliveryCelebrated
-    ) {
-
-      deliveryCelebrated =
-        true;
-
-      removeAndReplay(
-        status,
-        "evforge-delivered"
-      );
-
-      createConfetti();
-
-    }
-
-
-    if (
-      !text.includes("delivered")
-    ) {
-
-      deliveryCelebrated =
-        false;
-    }
-  }
-
-
-  /* ---------------------------------------------------------
-     DELIVERY CONFETTI
-     --------------------------------------------------------- */
-
-  function createConfetti() {
-
-    const pieces =
-      45;
-
-    for (
-      let i = 0;
-      i < pieces;
-      i++
-    ) {
-
-      const confetti =
-        document.createElement(
-          "div"
-        );
-
-      confetti.className =
-        "evforge-confetti";
-
-      confetti.style.left =
-        "50vw";
-
-      confetti.style.top =
-        "35vh";
-
-      confetti.style.background =
-        [
-          "#ffd400",
-          "#52f5a4",
-          "#ff5f7e",
-          "#62a8ff",
-          "#ffffff"
-        ][
-          Math.floor(
-            Math.random() * 5
-          )
-        ];
-
-      const angle =
-        Math.random() *
-        Math.PI *
-        2;
-
-      const distance =
-        100 +
-        Math.random() * 300;
-
-      confetti.style.setProperty(
-        "--cx",
-        Math.cos(angle) *
-        distance +
-        "px"
-      );
-
-      confetti.style.setProperty(
-        "--cy",
-        (
-          Math.sin(angle) *
-          distance +
-          180
-        ) + "px"
-      );
-
-      confetti.style.setProperty(
-        "--rotation",
-        (
-          Math.random() *
-          900 -
-          450
-        ) + "deg"
-      );
-
-      document.body.appendChild(
-        confetti
-      );
-
-      setTimeout(
-        () => confetti.remove(),
-        1700
-      );
-    }
-  }
-
-
-  /* ---------------------------------------------------------
-     TRACKER OBSERVER
-     --------------------------------------------------------- */
-
-  function setupTrackerObserver() {
-
-    const speed =
-      document.getElementById(
-        "speed"
-      );
-
-    const status =
-      document.getElementById(
-        "delivery-status"
-      );
-
-    if (!speed && !status) {
-      return;
-    }
-
-
-    if (speed) {
-
-      const observer =
-        new MutationObserver(
-          () => {
-
-            trackerSpeedEffect();
-
-          }
-        );
-
-      observer.observe(
-        speed,
-        {
-          childList: true,
-          characterData: true,
-          subtree: true
-        }
-      );
-
-    }
-
-
-    if (status) {
-
-      const observer =
-        new MutationObserver(
-          () => {
-
-            checkDeliveryStatus();
-
-          }
-        );
-
-      observer.observe(
-        status,
-        {
-          childList: true,
-          characterData: true,
-          subtree: true
-        }
-      );
-
-    }
-
-
-    const tracker =
-      document.querySelector(
-        ".tracker-wrap, .tracker, #delivery-map"
-      );
-
-    if (tracker) {
-
-      addClassOnce(
-        tracker,
-        "evforge-tracker-active"
-      );
-
-    }
-  }
-
-
-  /* ---------------------------------------------------------
-     WRAP EXISTING FUNCTIONS
-     --------------------------------------------------------- */
-
-  if (
-    typeof window.addToCart ===
-    "function"
-  ) {
-
-    const originalAddToCart =
-      window.addToCart;
-
-    window.addToCart =
-      function (id) {
-
-        const button =
-          document.querySelector(
-            `.product button[onclick*="${id}"]`
-          );
-
-        createCartParticles(
-          button
-        );
-
-        originalAddToCart(
-          id
-        );
-
-        setTimeout(
-          () => {
-
-            animateCartBadge();
-            animateCart();
-
-          },
-          30
-        );
-      };
-  }
-
-
-  if (
-    typeof window.toggleWish ===
-    "function"
-  ) {
-
-    const originalToggleWish =
-      window.toggleWish;
-
-    window.toggleWish =
-      function (id) {
-
-        originalToggleWish(
-          id
-        );
-
-        setTimeout(
-          () => {
-
-            animateProducts();
-            animateWishlist();
-
-          },
-          30
-        );
-      };
-  }
-
-
-  if (
-    typeof window.renderShop ===
-    "function"
-  ) {
-
-    const originalRenderShop =
-      window.renderShop;
-
-    window.renderShop =
-      function () {
-
-        originalRenderShop();
-
-        setTimeout(
-          () => {
-
-            animateProducts();
-            animateButtons();
-            animateWishlist();
-
-          },
-          20
-        );
-      };
-  }
-
-
-  if (
-    typeof window.renderFeatured ===
-    "function"
-  ) {
-
-    const originalRenderFeatured =
-      window.renderFeatured;
-
-    window.renderFeatured =
-      function () {
-
-        originalRenderFeatured();
-
-        setTimeout(
-          () => {
-
-            animateProducts();
-            animateButtons();
-            animateWishlist();
-
-          },
-          20
-        );
-      };
-  }
-
-
-  if (
-    typeof window.renderCart ===
-    "function"
-  ) {
-
-    const originalRenderCart =
-      window.renderCart;
-
-    window.renderCart =
-      function () {
-
-        originalRenderCart();
-
-        setTimeout(
-          () => {
-
-            animateCart();
-            animatePrices();
-
-          },
-          20
-        );
-      };
-  }
-
-
-  if (
-    typeof window.applyCoupon ===
-    "function"
-  ) {
-
-    const originalApplyCoupon =
-      window.applyCoupon;
-
-    window.applyCoupon =
-      function () {
-
-        originalApplyCoupon();
-
-        setTimeout(
-          () => {
-            animatePrices();
-          },
-          40
-        );
-      };
-  }
-
-
-  if (
-    typeof window.clearCoupon ===
-    "function"
-  ) {
-
-    const originalClearCoupon =
-      window.clearCoupon;
-
-    window.clearCoupon =
-      function () {
-
-        originalClearCoupon();
-
-        setTimeout(
-          () => {
-            animatePrices();
-          },
-          40
-        );
-      };
-  }
-
-
-  /* ---------------------------------------------------------
-     AUTOMATIC DOM OBSERVER
-     --------------------------------------------------------- */
-
-  function setupDOMObserver() {
-
-    const observer =
-      new MutationObserver(
-        mutations => {
-
-          let changed = false;
-
-          mutations.forEach(
-            mutation => {
-
-              if (
-                mutation.addedNodes &&
-                mutation.addedNodes.length
-              ) {
-
-                changed = true;
-              }
-
-            }
-          );
-
-
-          if (!changed) {
-            return;
-          }
-
-
-          setTimeout(
-            () => {
-
-              animateProducts();
-              animateCart();
-              animateButtons();
-              animateWishlist();
-
-            },
-            30
-          );
-
-        }
-      );
-
-
-    observer.observe(
-      document.body,
-      {
-        childList: true,
-        subtree: true
-      }
-    );
-  }
-
-
-  /* ---------------------------------------------------------
-     INITIAL ANIMATION START
-     --------------------------------------------------------- */
-
-  function startEVFORGEAnimations() {
-
-    document.body.classList.add(
-      "evforge-animations-ready"
-    );
-
-    animateHeroes();
-    animateProducts();
-    animateCart();
-    animateButtons();
-    animateWishlist();
-
-    setupTrackerObserver();
-    setupDOMObserver();
-
-  }
-
-
-  /* ---------------------------------------------------------
-     START
-     --------------------------------------------------------- */
-
-  if (
-    document.readyState ===
-    "loading"
-  ) {
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      startEVFORGEAnimations
-    );
-
-  } else {
-
-    startEVFORGEAnimations();
-
-  }
-
-})();
-/* =========================================================
-
-   EVFORGE APP.JS
-   FULL VERSION
-   ========================================================= */
 
 /* ==========================================
    PRODUCTS
@@ -1975,8 +160,7 @@ function saveWishlist() {
 function cartCount() {
   return Object.values(cart).reduce(
     (sum, quantity) =>
-      sum +
-      Math.max(
+      sum + Math.max(
         0,
         Number(quantity) || 0
       ),
@@ -1994,15 +178,13 @@ function subtotal() {
           p => p.id === id
         );
 
-      return (
-        sum +
+      return sum +
         (
           product
             ? product.price *
               Number(quantity)
             : 0
-        )
-      );
+        );
 
     },
     0
@@ -2054,8 +236,7 @@ function setupNav() {
   const current =
     location.pathname
       .split("/")
-      .pop() ||
-    "index.html";
+      .pop() || "index.html";
 
   const links = [
     ["Home", "index.html"],
@@ -2081,11 +262,9 @@ function setupNav() {
       ${links.map(
         ([label, url]) => `
           <a
-            class="${
-              current === url
-                ? "current"
-                : ""
-            }"
+            class="${current === url
+              ? "current"
+              : ""}"
             href="${url}"
           >
             ${label}
@@ -2166,9 +345,7 @@ function updateCartBadge() {
 function productCard(product) {
 
   const wished =
-    wishlist.includes(
-      product.id
-    );
+    wishlist.includes(product.id);
 
   return `
     <article class="product">
@@ -2209,15 +386,9 @@ function productCard(product) {
 
           <button
             class="btn"
-            ${
-              product.stock
-                ? ""
-                : "disabled"
-            }
+            ${product.stock ? "" : "disabled"}
             onclick="
-              addToCart(
-                '${product.id}'
-              )
+              addToCart('${product.id}')
             "
           >
             Add to cart
@@ -2226,17 +397,11 @@ function productCard(product) {
           <button
             class="heart"
             onclick="
-              toggleWish(
-                '${product.id}'
-              )
+              toggleWish('${product.id}')
             "
             aria-label="Toggle wishlist"
           >
-            ${
-              wished
-                ? "♥"
-                : "♡"
-            }
+            ${wished ? "♥" : "♡"}
           </button>
 
         </div>
@@ -2261,8 +426,7 @@ function renderShop() {
     (
       document.getElementById(
         "search"
-      )?.value ||
-      ""
+      )?.value || ""
     )
       .trim()
       .toLowerCase();
@@ -2270,8 +434,7 @@ function renderShop() {
   const filter =
     document.getElementById(
       "filter"
-    )?.value ||
-    "all";
+    )?.value || "all";
 
   let list =
     products.filter(
@@ -2307,8 +470,7 @@ function renderShop() {
     list =
       list.filter(
         p =>
-          p.category ===
-          filter
+          p.category === filter
       );
   }
 
@@ -2336,9 +498,7 @@ function renderFeatured() {
 
   host.innerHTML =
     products
-      .filter(
-        p => p.stock
-      )
+      .filter(p => p.stock)
       .slice(0, 4)
       .map(productCard)
       .join("");
@@ -2354,8 +514,7 @@ function toggleWish(id) {
   wishlist =
     wishlist.includes(id)
       ? wishlist.filter(
-          item =>
-            item !== id
+          item => item !== id
         )
       : [
           ...wishlist,
@@ -2395,11 +554,7 @@ function addToCart(id) {
   cart[id] =
     Math.min(
       20,
-      (
-        Number(
-          cart[id]
-        ) || 0
-      ) + 1
+      (Number(cart[id]) || 0) + 1
     );
 
   saveCart();
@@ -2436,8 +591,7 @@ function changeQty(
       )
     );
 
-  cart[id] =
-    quantity;
+  cart[id] = quantity;
 
   saveCart();
   renderCart();
@@ -2473,8 +627,7 @@ function renderCart() {
         .filter(
           ([id, quantity]) =>
             products.some(
-              p =>
-                p.id === id
+              p => p.id === id
             ) &&
             Number(quantity) > 0
         );
@@ -2527,9 +680,7 @@ function renderCart() {
                     <button
                       class="btn secondary"
                       onclick="
-                        removeItem(
-                          '${id}'
-                        )
+                        removeItem('${id}')
                       "
                     >
                       Remove
@@ -2625,11 +776,9 @@ function saveCoupon(code) {
       .toUpperCase();
 
   if (!coupons[code]) {
-
     notify(
       "That coupon does not exist."
     );
-
     return;
   }
 
@@ -2666,15 +815,12 @@ function saveCoupon(code) {
 }
 
 
-function removeSavedCoupon(
-  code
-) {
+function removeSavedCoupon(code) {
 
   const saved =
     getSavedCoupons()
       .filter(
-        item =>
-          item !== code
+        item => item !== code
       );
 
   localStorage.setItem(
@@ -2797,7 +943,6 @@ function copyCoupon(code) {
           "Coupon code: " +
           code
         );
-
       });
 
   } else {
@@ -2819,9 +964,7 @@ function useSavedCoupon(code) {
 
   window.location.href =
     "checkout.html?coupon=" +
-    encodeURIComponent(
-      code
-    );
+    encodeURIComponent(code);
 }
 
 
@@ -2832,14 +975,9 @@ function getActiveCoupon() {
       ACTIVE_COUPON_KEY
     );
 
-  if (!code) {
-    return null;
-  }
+  if (!code) return null;
 
-  return (
-    coupons[code] ||
-    null
-  );
+  return coupons[code] || null;
 }
 
 
@@ -2860,8 +998,7 @@ function calculateDiscount(
   let discount = 0;
 
   if (
-    coupon.type ===
-    "percent"
+    coupon.type === "percent"
   ) {
 
     discount =
@@ -2873,8 +1010,7 @@ function calculateDiscount(
   }
 
   if (
-    coupon.type ===
-    "fixed"
+    coupon.type === "fixed"
   ) {
 
     discount =
@@ -2883,509 +1019,45 @@ function calculateDiscount(
 
   return Math.min(
     subtotalAmount,
-    Math.max(
-      0,
-      discount
-    )
+    discount
   );
 }
-
-
-function getCheckoutTotals() {
-
-  const sub =
-    subtotal();
-
-  const discount =
-    calculateDiscount(
-      sub
-    );
-
-  const afterDiscount =
-    Math.max(
-      0,
-      sub - discount
-    );
-
-  const shipping =
-    afterDiscount === 0 ||
-    afterDiscount >= 1500
-      ? 0
-      : 99;
-
-  return {
-    subtotal: sub,
-    discount,
-    shipping,
-    total:
-      afterDiscount +
-      shipping
-  };
-}
-
-
-function updateCheckoutTotals() {
-
-  const totals =
-    getCheckoutTotals();
-
-  setText(
-    "subtotal",
-    money(
-      totals.subtotal
-    )
-  );
-
-  setText(
-    "discount",
-    "-" +
-    money(
-      totals.discount
-    )
-  );
-
-  setText(
-    "shipping",
-    money(
-      totals.shipping
-    )
-  );
-
-  setText(
-    "grand-total",
-    money(
-      totals.total
-    )
-  );
-
-  setText(
-    "cart-total",
-    money(
-      totals.total
-    )
-  );
-
-  const coupon =
-    getActiveCoupon();
-
-  const message =
-    document.getElementById(
-      "coupon-message"
-    );
-
-  if (
-    coupon &&
-    message
-  ) {
-
-    message.textContent =
-      `${coupon.code} applied: ${coupon.description}`;
-  }
-}
-
-
-function applyCoupon() {
-
-  const input =
-    document.getElementById(
-      "coupon-code"
-    );
-
-  const message =
-    document.getElementById(
-      "coupon-message"
-    );
-
-  if (!input) return;
-
-  const code =
-    input.value
-      .trim()
-      .toUpperCase();
-
-  if (!code) {
-
-    if (message) {
-
-      message.textContent =
-        "Enter a coupon code first.";
-    }
-
-    return;
-  }
-
-  if (!coupons[code]) {
-
-    localStorage.removeItem(
-      ACTIVE_COUPON_KEY
-    );
-
-    if (message) {
-
-      message.textContent =
-        "Invalid coupon code.";
-    }
-
-    notify(
-      "Invalid coupon code ❌"
-    );
-
-    updateCheckoutTotals();
-
-    return;
-  }
-
-  localStorage.setItem(
-    ACTIVE_COUPON_KEY,
-    code
-  );
-
-  saveCoupon(code);
-
-  if (message) {
-
-    message.textContent =
-      `${code} applied! ${coupons[code].description}`;
-  }
-
-  notify(
-    code +
-    " applied! 🎟️"
-  );
-
-  updateCheckoutTotals();
-}
-
-
-function clearCoupon() {
-
-  localStorage.removeItem(
-    ACTIVE_COUPON_KEY
-  );
-
-  const input =
-    document.getElementById(
-      "coupon-code"
-    );
-
-  const message =
-    document.getElementById(
-      "coupon-message"
-    );
-
-  if (input) {
-    input.value = "";
-  }
-
-  if (message) {
-
-    message.textContent =
-      "Coupon removed.";
-  }
-
-  updateCheckoutTotals();
-}
-
-
-function initCheckoutCoupon() {
-
-  const input =
-    document.getElementById(
-      "coupon-code"
-    );
-
-  if (!input) return;
-
-  const params =
-    new URLSearchParams(
-      location.search
-    );
-
-  const urlCoupon =
-    params.get("coupon");
-
-  const savedCoupon =
-    localStorage.getItem(
-      ACTIVE_COUPON_KEY
-    );
-
-  const code =
-    urlCoupon ||
-    savedCoupon;
-
-  if (
-    code &&
-    coupons[
-      code.toUpperCase()
-    ]
-  ) {
-
-    input.value =
-      code.toUpperCase();
-
-    localStorage.setItem(
-      ACTIVE_COUPON_KEY,
-      code.toUpperCase()
-    );
-
-    updateCheckoutTotals();
-  }
-}
-
-
-/* ==========================================
-   CHECKOUT
-   ========================================== */
-
-function checkout() {
-
-  if (
-    cartCount() === 0
-  ) {
-
-    notify(
-      "Your cart is empty!"
-    );
-
-    return;
-  }
-
-  window.location.href =
-    "checkout.html";
-}
-
-
-function submitDemoCheckout(
-  event
-) {
-
-  event.preventDefault();
-
-  const form =
-    document.getElementById(
-      "demo-checkout-form"
-    );
-
-  const message =
-    document.getElementById(
-      "checkout-message"
-    );
-
-  if (
-    !form ||
-    !form.reportValidity()
-  ) {
-    return;
-  }
-
-  if (
-    cartCount() === 0
-  ) {
-
-    if (message) {
-
-      message.textContent =
-        "Your cart is empty.";
-    }
-
-    notify(
-      "Your cart is empty!"
-    );
-
-    window.location.href =
-      "shop.html";
-
-    return;
-  }
-
-  const getValue =
-    id =>
-      document
-        .getElementById(id)
-        ?.value
-        .trim() ||
-      "";
-
-  const customer = {
-
-    name:
-      getValue(
-        "customer-name"
-      ),
-
-    email:
-      getValue(
-        "customer-email"
-      ),
-
-    phone:
-      getValue(
-        "customer-phone"
-      ),
-
-    alternatePhone:
-      getValue(
-        "customer-alt-phone"
-      ),
-
-    address:
-      getValue(
-        "customer-address"
-      ),
-
-    apartment:
-      getValue(
-        "customer-address2"
-      ),
-
-    landmark:
-      getValue(
-        "customer-landmark"
-      ),
-
-    city:
-      getValue(
-        "customer-city"
-      ),
-
-    state:
-      getValue(
-        "customer-state"
-      ),
-
-    postalCode:
-      getValue(
-        "customer-postal"
-      ),
-
-    country:
-      getValue(
-        "customer-country"
-      ),
-
-    preferredDeliveryTime:
-      getValue(
-        "delivery-time"
-      ),
-
-    deliveryInstructions:
-      getValue(
-        "delivery-instructions"
-      ),
-
-    safePlaceAllowed:
-      document.getElementById(
-        "safe-place"
-      )?.checked ||
-      false
-  };
-
-  const totals =
-    getCheckoutTotals();
-
-  const items =
-    Object.entries(cart)
-      .map(
-        ([id, quantity]) => {
-
-          const p =
-            products.find(
-              product =>
-                product.id ===
-                id
-            );
-
-          return {
-            id,
-            name:
-              p?.name ||
-              id,
-            price:
-              p?.price ||
-              0,
-            quantity:
-              Number(quantity) ||
-              0
-          };
-        }
-      );
-
-  const activeCoupon =
-    getActiveCoupon();
-
-  const order = {
-
-    orderId:
-      "EVF-" +
-      Date.now()
-        .toString()
-        .slice(-8),
-
-    subtotal:
-      totals.subtotal,
-
-    discount:
-      totals.discount,
-
-    shipping:
-      totals.shipping,
-
-    total:
-      totals.total,
-
-    coupon:
-      activeCoupon
-        ? activeCoupon.code
-        : null,
-
-    items,
-
-    itemCount:
-      cartCount(),
-
-    createdAt:
-      new Date().toISOString(),
-
-    status:
-      "Order confirmed",
-
-    customer
-  };
-
-  try {
-
-    localStorage.setItem(
-      ORDER_KEY,
-      JSON.stringify(order)
-    );
-
-    const history =
-      readJSON(
-        localStorage,
-        HISTORY_KEY,
-        []
-      );
-
-    history.unshift(order);
+    /* ==========================================
+       CHECKOUT CONTINUATION
+       ========================================== */
 
     localStorage.setItem(
       HISTORY_KEY,
       JSON.stringify(history)
     );
 
+    /*
+      Reset delivery progress.
+    */
     localStorage.setItem(
       RACE_KEY,
       "0"
     );
 
+    /*
+      Require demo SMS verification
+      for this new order.
+    */
     sessionStorage.removeItem(
       VERIFIED_KEY
     );
 
+    /*
+      Clear shopping cart.
+    */
     cart = {};
 
     saveCart();
 
+    /*
+      Coupon is one-use for this
+      checkout session.
+    */
     localStorage.removeItem(
       ACTIVE_COUPON_KEY
     );
@@ -3393,7 +1065,6 @@ function submitDemoCheckout(
   } catch (error) {
 
     if (message) {
-
       message.textContent =
         "Could not save your demo order.";
     }
@@ -3401,6 +1072,10 @@ function submitDemoCheckout(
     return;
   }
 
+  /*
+    Go through the existing
+    demo SMS verification gate.
+  */
   window.location.href =
     "sms.html";
 }
@@ -3478,7 +1153,6 @@ function renderOrderHistory() {
                   <li>
                     ${item.name}
                     × ${item.quantity}
-
                     <span>
                       ${money(
                         item.price *
@@ -3525,17 +1199,11 @@ function renderOrderHistory() {
               >
 
                 <strong>
-                  ${
-                    order.customer?.name ||
-                    "Demo customer"
-                  }
+                  ${order.customer?.name || "Demo customer"}
                 </strong>
 
                 <span>
-                  ${
-                    order.customer?.city ||
-                    "No city"
-                  }
+                  ${order.customer?.city || "No city"}
                 </span>
 
               </div>
@@ -3573,8 +1241,9 @@ function renderOrderHistory() {
                     style="color:#52f5a4"
                   >
                     ${
-                      order.coupon ||
-                      "None"
+                      order.coupon
+                        ? order.coupon
+                        : "None"
                     }
                   </strong>
                 </div>
@@ -3608,7 +1277,6 @@ function renderOrderHistory() {
                 <div
                   class="order-grand-total"
                 >
-
                   <span>
                     Total
                   </span>
@@ -3618,7 +1286,6 @@ function renderOrderHistory() {
                       order.total
                     )}
                   </strong>
-
                 </div>
 
               </div>
@@ -3676,6 +1343,10 @@ function loadPreviousOrder(
     "0"
   );
 
+  /*
+    Previous orders need demo
+    verification before tracker.
+  */
   sessionStorage.removeItem(
     VERIFIED_KEY
   );
@@ -3684,15 +1355,12 @@ function loadPreviousOrder(
     "Order loaded into Turbo Tracker 🚗"
   );
 
-  setTimeout(
-    () => {
+  setTimeout(() => {
 
-      window.location.href =
-        "sms.html";
+    window.location.href =
+      "sms.html";
 
-    },
-    700
-  );
+  }, 700);
 }
 
 
@@ -3736,8 +1404,7 @@ function notify(message) {
         "div"
       );
 
-    toast.id =
-      "toast";
+    toast.id = "toast";
 
     Object.assign(
       toast.style,
@@ -3782,10 +1449,8 @@ function notify(message) {
   window.evforgeToastTimer =
     setTimeout(
       () => {
-
         toast.style.display =
           "none";
-
       },
       2500
     );
@@ -3871,14 +1536,39 @@ function positionMarker(
         id
       );
 
-    if (marker) {
-      break;
-    }
+    if (marker) break;
   }
 
   if (!marker) return;
 
   if (
+    marker.tagName ===
+    "circle"
+  ) {
+
+    marker.setAttribute(
+      "cx",
+      x
+    );
+
+    marker.setAttribute(
+      "cy",
+      y
+    );
+
+    return;
+  }
+
+  marker.setAttribute(
+    "x",
+    x
+  );
+
+  marker.setAttribute(
+    "y",
+    y
+  );
+}
     marker.tagName
       .toLowerCase() ===
     "text"
@@ -4091,8 +1781,7 @@ function buildFixedMap() {
   const [
     sx,
     sy
-  ] =
-    routePoints[0];
+  ] = routePoints[0];
 
   const [
     ex,
@@ -4223,8 +1912,11 @@ function placeCarAt(
       distance
     );
 
+  /*
+    Keep the car completely upright.
+    No rotate() is applied.
+  */
 
-  /* Car stays upright */
   car.setAttribute(
     "transform",
     `translate(
@@ -4246,7 +1938,6 @@ function getTargetSpeed(
 
   const remaining =
     1 - progress;
-
 
   if (
     elapsed < 2
@@ -4382,8 +2073,7 @@ function updateTrackerDashboard(
           Math.ceil(
             minutes
           )
-        ) +
-        " min"
+        ) + " min"
       );
     }
 
@@ -4422,7 +2112,11 @@ function startRace() {
   }
 
 
-  /* SMS verification required */
+  /*
+    Turbo Tracker requires
+    demo SMS verification.
+  */
+
   if (
     sessionStorage.getItem(
       VERIFIED_KEY
@@ -4483,6 +2177,7 @@ function startRace() {
 
 
   let speed = 0;
+
   let elapsed = 0;
 
 
@@ -4540,9 +2235,13 @@ function startRace() {
           );
 
 
+        /*
+          Speed controls the
+          animation movement.
+        */
+
         const baseMovement =
           0.0027;
-
 
         const progressStep =
           (
@@ -4654,12 +2353,10 @@ function startRace() {
             "0.0"
           );
 
-
           setText(
             "delivery-status",
             "Delivered 🏁"
           );
-
 
           setText(
             "delivery-message",
@@ -4674,6 +2371,7 @@ function startRace() {
 
 
           if (bar) {
+
             bar.style.width =
               "100%";
           }
@@ -4682,6 +2380,8 @@ function startRace() {
           notify(
             "Demo delivery complete! 🏁"
           );
+
+          playDeliveryCelebration();
         }
 
       },
@@ -4706,21 +2406,11 @@ function pauseRace() {
   }
 
 
-  if (
-    raceProgress > 0 &&
-    raceProgress < 1
-  ) {
+  /*
+    There is intentionally
+    no pause button in the UI.
+  */
 
-    setText(
-      "delivery-status",
-      "Paused"
-    );
-
-    setText(
-      "delivery-message",
-      "Delivery paused."
-    );
-  }
 }
 
 
@@ -4749,6 +2439,11 @@ function initTracker() {
     return;
   }
 
+
+  /*
+    Require demo SMS
+    verification.
+  */
 
   if (
     sessionStorage.getItem(
@@ -4779,7 +2474,6 @@ function initTracker() {
       "Order confirmed"
     );
 
-
     setText(
       "delivery-message",
       `Order ${order.orderId} confirmed! Preparing your delivery.`
@@ -4807,6 +2501,11 @@ function initTracker() {
   }
 
 
+  /*
+    Continue from saved
+    progress if needed.
+  */
+
   placeCarAt(
     raceProgress
   );
@@ -4827,6 +2526,13 @@ function initTracker() {
   }
 
 
+  /*
+    Automatic delivery.
+    No Start button.
+    No Stop button.
+    No Pause button.
+  */
+
   setTimeout(
     startRace,
     700
@@ -4835,7 +2541,1009 @@ function initTracker() {
 
 
 /* ==========================================
-   APP INITIALISE
+   EVFORGE ANIMATION SYSTEM
+   ========================================== */
+
+function injectEVForgeAnimations() {
+
+  if (
+    document.getElementById(
+      "evforge-animation-style"
+    )
+  ) {
+    return;
+  }
+
+
+  const style =
+    document.createElement(
+      "style"
+    );
+
+  style.id =
+    "evforge-animation-style";
+
+
+  style.textContent = `
+
+    /* PAGE ENTRY */
+
+    body {
+      animation:
+        evforgePageIn
+        .55s
+        ease-out
+        both;
+    }
+
+    @keyframes evforgePageIn {
+
+      from {
+        opacity: 0;
+        transform:
+          translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform:
+          translateY(0);
+      }
+    }
+
+
+    /* NAV */
+
+    nav {
+      animation:
+        evforgeNavIn
+        .7s
+        cubic-bezier(
+          .2,
+          .8,
+          .2,
+          1
+        )
+        both;
+    }
+
+    @keyframes evforgeNavIn {
+
+      from {
+        opacity: 0;
+        transform:
+          translateY(-18px);
+      }
+
+      to {
+        opacity: 1;
+        transform:
+          translateY(0);
+      }
+    }
+
+
+    /* PRODUCT CARDS */
+
+    .product-card,
+    .card,
+    .shop-card {
+
+      transition:
+        transform
+          .28s
+          cubic-bezier(
+            .2,
+            .8,
+            .2,
+            1
+          ),
+        box-shadow
+          .28s
+          ease,
+        filter
+          .28s
+          ease;
+    }
+
+
+    .product-card:hover,
+    .card:hover,
+    .shop-card:hover {
+
+      transform:
+        translateY(-8px)
+        scale(1.025);
+
+      filter:
+        brightness(1.08);
+
+      box-shadow:
+        0 18px 45px
+        rgba(
+          255,
+          212,
+          0,
+          .18
+        );
+    }
+
+
+    /* CARD IMAGES */
+
+    .product-card img,
+    .card img,
+    .shop-card img {
+
+      transition:
+        transform
+          .4s
+          cubic-bezier(
+            .2,
+            .8,
+            .2,
+            1
+          ),
+        filter
+          .35s
+          ease;
+    }
+
+
+    .product-card:hover img,
+    .card:hover img,
+    .shop-card:hover img {
+
+      transform:
+        scale(1.075);
+
+      filter:
+        drop-shadow(
+          0 8px 14px
+          rgba(
+            255,
+            212,
+            0,
+            .28
+          )
+        );
+    }
+
+
+    /* BUTTON PRESS */
+
+    button,
+    .btn,
+    a.btn {
+
+      transition:
+        transform
+          .16s
+          ease,
+        box-shadow
+          .2s
+          ease,
+        filter
+          .2s
+          ease;
+    }
+
+
+    button:hover,
+    .btn:hover,
+    a.btn:hover {
+
+      filter:
+        brightness(1.08);
+    }
+
+
+    button:active,
+    .btn:active,
+    a.btn:active {
+
+      transform:
+        scale(.96);
+    }
+
+
+    /* WISHLIST */
+
+    .wishlist-btn {
+
+      transition:
+        transform
+          .2s
+          ease;
+    }
+
+
+    .wishlist-btn:hover {
+
+      transform:
+        scale(1.12);
+    }
+
+
+    .wishlist-pop {
+
+      animation:
+        evforgeHeartPop
+        .45s
+        cubic-bezier(
+          .2,
+          1.5,
+          .4,
+          1
+        );
+    }
+
+
+    @keyframes evforgeHeartPop {
+
+      0% {
+        transform:
+          scale(.6);
+      }
+
+      60% {
+        transform:
+          scale(1.3);
+      }
+
+      100% {
+        transform:
+          scale(1);
+      }
+    }
+
+
+    /* CART PANEL */
+
+    #cart-panel {
+
+      transition:
+        transform
+          .35s
+          cubic-bezier(
+            .2,
+            .8,
+            .2,
+            1
+          ),
+        opacity
+          .25s
+          ease;
+    }
+
+
+    /* RARE / HOLO GLOW */
+
+    .rare,
+    .holo {
+
+      position:
+        relative;
+    }
+
+
+    .rare::after,
+    .holo::after {
+
+      content: "";
+
+      position:
+        absolute;
+
+      inset: 0;
+
+      pointer-events:
+        none;
+
+      border-radius:
+        inherit;
+
+      background:
+        linear-gradient(
+          115deg,
+          transparent 20%,
+          rgba(
+            255,
+            255,
+            255,
+            .18
+          ) 45%,
+          transparent 70%
+        );
+
+      transform:
+        translateX(-130%);
+
+      transition:
+        transform
+        .65s
+        ease;
+    }
+
+
+    .rare:hover::after,
+    .holo:hover::after {
+
+      transform:
+        translateX(130%);
+    }
+
+
+    /* SEARCH */
+
+    #search {
+
+      transition:
+        box-shadow
+          .25s
+          ease,
+        transform
+          .2s
+          ease;
+    }
+
+
+    #search:focus {
+
+      transform:
+        scale(1.01);
+
+      box-shadow:
+        0 0 0 3px
+        rgba(
+          255,
+          212,
+          0,
+          .14
+        );
+    }
+
+
+    /* TRACKER CAR */
+
+    #delivery-car {
+
+      transition:
+        filter
+          .2s
+          ease;
+    }
+
+
+    .evforge-speed-glow {
+
+      filter:
+        drop-shadow(
+          0 0 8px
+          rgba(
+            255,
+            212,
+            0,
+            .75
+          )
+        )
+        drop-shadow(
+          0 0 18px
+          rgba(
+            255,
+            100,
+            0,
+            .35
+          )
+        );
+    }
+
+
+    /* TRACKER STATUS */
+
+    #delivery-status {
+
+      transition:
+        transform
+          .25s
+          ease,
+        filter
+          .25s
+          ease;
+    }
+
+
+    .evforge-status-pulse {
+
+      animation:
+        evforgeStatusPulse
+        1.1s
+        ease-in-out
+        infinite;
+    }
+
+
+    @keyframes evforgeStatusPulse {
+
+      0%,
+      100% {
+        filter:
+          brightness(1);
+      }
+
+      50% {
+        filter:
+          brightness(1.35);
+      }
+    }
+
+
+    /* DELIVERY CELEBRATION */
+
+    .evforge-confetti {
+
+      position:
+        fixed;
+
+      width:
+        8px;
+
+      height:
+        14px;
+
+      pointer-events:
+        none;
+
+      z-index:
+        10000;
+
+      animation:
+        evforgeConfetti
+        1.7s
+        cubic-bezier(
+          .15,
+          .8,
+          .3,
+          1
+        )
+        forwards;
+    }
+
+
+    @keyframes evforgeConfetti {
+
+      0% {
+
+        opacity: 1;
+
+        transform:
+          translate(
+            0,
+            0
+          )
+          rotate(0deg);
+      }
+
+      100% {
+
+        opacity: 0;
+
+        transform:
+          translate(
+            var(--x),
+            var(--y)
+          )
+          rotate(
+            var(--r)
+          );
+      }
+    }
+
+
+    /* REDUCED MOTION */
+
+    @media (
+      prefers-reduced-motion:
+      reduce
+    ) {
+
+      *,
+      *::before,
+      *::after {
+
+        animation-duration:
+          .01ms !important;
+
+        animation-iteration-count:
+          1 !important;
+
+        transition-duration:
+          .01ms !important;
+      }
+    }
+  `;
+
+
+  document.head.appendChild(
+    style
+  );
+}
+
+
+/* ==========================================
+   CARD ENTRANCE ANIMATION
+   ========================================== */
+
+function animateProductCards() {
+
+  const cards =
+    document.querySelectorAll(
+      ".product-card, .card, .shop-card"
+    );
+
+  if (!cards.length) {
+    return;
+  }
+
+
+  cards.forEach(
+    (card, index) => {
+
+      card.style.opacity =
+        "0";
+
+      card.style.transform =
+        "translateY(18px)";
+
+
+      setTimeout(
+        () => {
+
+          card.style.transition =
+            "opacity .45s ease, transform .45s cubic-bezier(.2,.8,.2,1)";
+
+          card.style.opacity =
+            "1";
+
+          card.style.transform =
+            "translateY(0)";
+
+        },
+        Math.min(
+          index * 55,
+          600
+        )
+      );
+    }
+  );
+}
+
+
+/* ==========================================
+   SPEED VISUAL EFFECT
+   ========================================== */
+
+function updateSpeedVisuals(
+  speed
+) {
+
+  const car =
+    document.getElementById(
+      "delivery-car"
+    );
+
+  if (!car) {
+    return;
+  }
+
+
+  if (
+    Number(speed) >= 70
+  ) {
+
+    car.classList.add(
+      "evforge-speed-glow"
+    );
+
+  } else {
+
+    car.classList.remove(
+      "evforge-speed-glow"
+    );
+  }
+}
+
+
+/* ==========================================
+   DELIVERY CELEBRATION
+   ========================================== */
+
+function playDeliveryCelebration() {
+
+  if (
+    document.body.dataset
+      .evforgeCelebrated ===
+    "yes"
+  ) {
+    return;
+  }
+
+
+  document.body.dataset
+    .evforgeCelebrated =
+    "yes";
+
+
+  const total =
+    42;
+
+
+  for (
+    let i = 0;
+    i < total;
+    i++
+  ) {
+
+    const piece =
+      document.createElement(
+        "span"
+      );
+
+
+    piece.className =
+      "evforge-confetti";
+
+
+    piece.style.left =
+      "50%";
+
+    piece.style.top =
+      "45%";
+
+
+    piece.style.setProperty(
+      "--x",
+      (
+        Math.random() *
+        520 -
+        260
+      ) + "px"
+    );
+
+
+    piece.style.setProperty(
+      "--y",
+      (
+        Math.random() *
+        430 -
+        210
+      ) + "px"
+    );
+
+
+    piece.style.setProperty(
+      "--r",
+      (
+        Math.random() *
+        720 -
+        360
+      ) + "deg"
+    );
+
+
+    piece.style.animationDelay =
+      (
+        Math.random() *
+        .25
+      ) + "s";
+
+
+    /*
+      Use a varied set of
+      EVFORGE-style colors.
+    */
+
+    const colors = [
+      "#ffd400",
+      "#52f5a4",
+      "#ff5c5c",
+      "#ffffff",
+      "#6ea8ff"
+    ];
+
+
+    piece.style.background =
+      colors[
+        Math.floor(
+          Math.random() *
+          colors.length
+        )
+      ];
+
+
+    document.body.appendChild(
+      piece
+    );
+
+
+    setTimeout(
+      () => {
+        piece.remove();
+      },
+      2100
+    );
+  }
+}
+
+
+/* ==========================================
+   BUTTON RIPPLE
+   ========================================== */
+
+function addButtonRipple() {
+
+  document.addEventListener(
+    "click",
+    event => {
+
+      const button =
+        event.target.closest(
+          "button, .btn"
+        );
+
+      if (!button) {
+        return;
+      }
+
+
+      const ripple =
+        document.createElement(
+          "span"
+        );
+
+
+      ripple.style.position =
+        "absolute";
+
+      ripple.style.pointerEvents =
+        "none";
+
+      ripple.style.width =
+        "8px";
+
+      ripple.style.height =
+        "8px";
+
+      ripple.style.borderRadius =
+        "50%";
+
+      ripple.style.background =
+        "rgba(255,255,255,.45)";
+
+      ripple.style.transform =
+        "translate(-50%,-50%) scale(0)";
+
+      ripple.style.transition =
+        "transform .45s ease, opacity .45s ease";
+
+
+      const rect =
+        button.getBoundingClientRect();
+
+
+      ripple.style.left =
+        (
+          event.clientX -
+          rect.left
+        ) + "px";
+
+
+      ripple.style.top =
+        (
+          event.clientY -
+          rect.top
+        ) + "px";
+
+
+      if (
+        getComputedStyle(
+          button
+        ).position ===
+        "static"
+      ) {
+
+        button.style.position =
+          "relative";
+      }
+
+
+      button.style.overflow =
+        "hidden";
+
+
+      button.appendChild(
+        ripple
+      );
+
+
+      requestAnimationFrame(
+        () => {
+
+          ripple.style.transform =
+            "translate(-50%,-50%) scale(18)";
+
+          ripple.style.opacity =
+            "0";
+        }
+      );
+
+
+      setTimeout(
+        () => {
+          ripple.remove();
+        },
+        500
+      );
+    }
+  );
+}
+
+
+/* ==========================================
+   CART COUNT POP
+   ========================================== */
+
+function watchCartCount() {
+
+  const count =
+    document.getElementById(
+      "cart-count"
+    );
+
+  if (!count) {
+    return;
+  }
+
+
+  let previous =
+    count.textContent;
+
+
+  const observer =
+    new MutationObserver(
+      () => {
+
+        const current =
+          count.textContent;
+
+
+        if (
+          current !==
+          previous
+        ) {
+
+          count.animate(
+            [
+              {
+                transform:
+                  "scale(1)"
+              },
+              {
+                transform:
+                  "scale(1.35)"
+              },
+              {
+                transform:
+                  "scale(1)"
+              }
+            ],
+            {
+              duration:
+                360,
+              easing:
+                "cubic-bezier(.2,1.5,.4,1)"
+            }
+          );
+
+
+          previous =
+            current;
+        }
+      }
+    );
+
+
+  observer.observe(
+    count,
+    {
+      childList:
+        true,
+      characterData:
+        true,
+      subtree:
+        true
+    }
+  );
+}
+
+
+/* ==========================================
+   TRACKER SPEED WATCHER
+   ========================================== */
+
+function watchTrackerSpeed() {
+
+  const speedElement =
+    document.getElementById(
+      "speed"
+    );
+
+  if (!speedElement) {
+    return;
+  }
+
+
+  const observer =
+    new MutationObserver(
+      () => {
+
+        const value =
+          parseInt(
+            speedElement
+              .textContent,
+            10
+          ) || 0;
+
+
+        updateSpeedVisuals(
+          value
+        );
+      }
+    );
+
+
+  observer.observe(
+    speedElement,
+    {
+      childList:
+        true,
+      characterData:
+        true,
+      subtree:
+        true
+    }
+  );
+}
+
+
+/* ==========================================
+   GLOBAL ANIMATION INITIALISATION
+   ========================================== */
+
+function initAnimations() {
+
+  injectEVForgeAnimations();
+
+  addButtonRipple();
+
+  watchCartCount();
+
+  watchTrackerSpeed();
+
+  /*
+    Give rendered product cards
+    a staggered entrance.
+  */
+
+  setTimeout(
+    animateProductCards,
+    120
+  );
+}
+
+
+/* ==========================================
+   INITIALISE
    ========================================== */
 
 function init() {
@@ -4856,6 +3564,8 @@ function init() {
 
   initCheckoutCoupon();
 
+  initAnimations();
+
   initTracker();
 }
 
@@ -4864,658 +3574,3 @@ document.addEventListener(
   "DOMContentLoaded",
   init
 );
-
-
-/* =========================================================
-   EVFORGE ANIMATION SYSTEM
-   ========================================================= */
-
-(function initAnimations() {
-
-  function injectStyles() {
-
-    if (
-      document.getElementById(
-        "evforge-animation-styles"
-      )
-    ) {
-      return;
-    }
-
-    const style =
-      document.createElement(
-        "style"
-      );
-
-    style.id =
-      "evforge-animation-styles";
-
-    style.textContent = `
-
-      main {
-        animation:
-          evforgePageIn
-          .6s
-          cubic-bezier(.16,1,.3,1)
-          both;
-      }
-
-      @keyframes evforgePageIn {
-        from {
-          opacity: 0;
-          transform:
-            translateY(12px);
-        }
-
-        to {
-          opacity: 1;
-          transform:
-            translateY(0);
-        }
-      }
-
-
-      nav {
-        animation:
-          evforgeNavIn
-          .55s
-          cubic-bezier(.16,1,.3,1)
-          both;
-      }
-
-      @keyframes evforgeNavIn {
-        from {
-          opacity: 0;
-          transform:
-            translateY(-15px);
-        }
-
-        to {
-          opacity: 1;
-          transform:
-            translateY(0);
-        }
-      }
-
-
-      .product {
-        animation:
-          evforgeProductIn
-          .5s
-          cubic-bezier(.16,1,.3,1)
-          both;
-
-        transition:
-          transform .25s ease,
-          box-shadow .25s ease;
-      }
-
-      .product:hover {
-        transform:
-          translateY(-7px)
-          scale(1.015);
-
-        box-shadow:
-          0 15px 35px
-          rgba(0,0,0,.35),
-          0 0 20px
-          rgba(255,212,0,.12);
-      }
-
-      .product img {
-        transition:
-          transform .35s ease,
-          filter .35s ease;
-      }
-
-      .product:hover img {
-        transform:
-          scale(1.05);
-
-        filter:
-          drop-shadow(
-            0 8px 14px
-            rgba(0,0,0,.35)
-          );
-      }
-
-      @keyframes evforgeProductIn {
-        from {
-          opacity: 0;
-          transform:
-            translateY(22px)
-            scale(.97);
-        }
-
-        to {
-          opacity: 1;
-          transform:
-            translateY(0)
-            scale(1);
-        }
-      }
-
-
-      .btn,
-      button {
-        transition:
-          transform .18s ease,
-          box-shadow .18s ease;
-      }
-
-      .btn:hover,
-      button:hover {
-        transform:
-          translateY(-2px);
-      }
-
-      .btn:active,
-      button:active {
-        transform:
-          scale(.96);
-      }
-
-
-      .heart {
-        transition:
-          transform .2s ease,
-          color .2s ease;
-      }
-
-
-      .cart-row {
-        animation:
-          evforgeCartIn
-          .4s
-          ease
-          both;
-      }
-
-      @keyframes evforgeCartIn {
-        from {
-          opacity: 0;
-          transform:
-            translateX(20px);
-        }
-
-        to {
-          opacity: 1;
-          transform:
-            translateX(0);
-        }
-      }
-
-
-      .evforge-ripple {
-        position: fixed;
-
-        width: 8px;
-        height: 8px;
-
-        border-radius: 50%;
-
-        background:
-          rgba(255,212,0,.55);
-
-        pointer-events: none;
-
-        z-index: 99999;
-
-        animation:
-          evforgeRipple
-          .5s
-          ease-out
-          forwards;
-      }
-
-      @keyframes evforgeRipple {
-        from {
-          opacity: .8;
-          transform:
-            translate(-50%,-50%)
-            scale(1);
-        }
-
-        to {
-          opacity: 0;
-          transform:
-            translate(-50%,-50%)
-            scale(10);
-        }
-      }
-
-
-      #delivery-car {
-        transition:
-          filter .2s ease;
-      }
-
-      .evforge-fast-car {
-        filter:
-          drop-shadow(
-            0 0 9px
-            rgba(255,212,0,.8)
-          );
-      }
-
-
-      .evforge-delivered {
-        animation:
-          evforgeDelivered
-          .8s
-          ease;
-      }
-
-      @keyframes evforgeDelivered {
-        0% {
-          transform:
-            scale(1);
-        }
-
-        35% {
-          transform:
-            scale(1.08);
-        }
-
-        65% {
-          transform:
-            scale(.97);
-        }
-
-        100% {
-          transform:
-            scale(1);
-        }
-      }
-
-
-      .evforge-confetti {
-        position: fixed;
-
-        width: 8px;
-        height: 12px;
-
-        pointer-events: none;
-
-        z-index: 100000;
-
-        animation:
-          evforgeConfetti
-          1.5s
-          ease-out
-          forwards;
-      }
-
-      @keyframes evforgeConfetti {
-        from {
-          opacity: 1;
-          transform:
-            translate(0,0)
-            rotate(0);
-        }
-
-        to {
-          opacity: 0;
-          transform:
-            translate(
-              var(--x),
-              var(--y)
-            )
-            rotate(
-              var(--r)
-            );
-        }
-      }
-
-    `;
-
-    document.head.appendChild(
-      style
-    );
-  }
-
-
-  function animateProducts() {
-
-    document
-      .querySelectorAll(
-        ".product"
-      )
-      .forEach(
-        (card, index) => {
-
-          card.style.animationDelay =
-            Math.min(
-              index * .05,
-              .4
-            ) + "s";
-
-        }
-      );
-  }
-
-
-  function createRipple(
-    event
-  ) {
-
-    if (
-      event.target.closest(
-        "input, textarea, select"
-      )
-    ) {
-      return;
-    }
-
-    const ripple =
-      document.createElement(
-        "div"
-      );
-
-    ripple.className =
-      "evforge-ripple";
-
-    ripple.style.left =
-      event.clientX +
-      "px";
-
-    ripple.style.top =
-      event.clientY +
-      "px";
-
-    document.body.appendChild(
-      ripple
-    );
-
-    setTimeout(
-      () => ripple.remove(),
-      550
-    );
-  }
-
-
-  function animateWishlist(
-    event
-  ) {
-
-    const heart =
-      event.target.closest(
-        ".heart"
-      );
-
-    if (!heart) {
-      return;
-    }
-
-    heart.animate(
-      [
-        {
-          transform:
-            "scale(1)"
-        },
-        {
-          transform:
-            "scale(1.4)"
-        },
-        {
-          transform:
-            "scale(.85)"
-        },
-        {
-          transform:
-            "scale(1)"
-        }
-      ],
-      {
-        duration: 450,
-        easing:
-          "cubic-bezier(.16,1,.3,1)"
-      }
-    );
-  }
-
-
-  function createConfetti() {
-
-    for (
-      let i = 0;
-      i < 45;
-      i++
-    ) {
-
-      const piece =
-        document.createElement(
-          "div"
-        );
-
-      piece.className =
-        "evforge-confetti";
-
-      piece.style.left =
-        "50vw";
-
-      piece.style.top =
-        "35vh";
-
-      piece.style.background =
-        [
-          "#ffd400",
-          "#52f5a4",
-          "#ff5f7e",
-          "#62a8ff",
-          "#ffffff"
-        ][
-          Math.floor(
-            Math.random() * 5
-          )
-        ];
-
-      piece.style.setProperty(
-        "--x",
-        (
-          Math.random() *
-          500 -
-          250
-        ) + "px"
-      );
-
-      piece.style.setProperty(
-        "--y",
-        (
-          Math.random() *
-          400 +
-          100
-        ) + "px"
-      );
-
-      piece.style.setProperty(
-        "--r",
-        (
-          Math.random() *
-          900 -
-          450
-        ) + "deg"
-      );
-
-      document.body.appendChild(
-        piece
-      );
-
-      setTimeout(
-        () => piece.remove(),
-        1600
-      );
-    }
-  }
-
-
-  let deliveredShown =
-    false;
-
-  function watchTracker() {
-
-    const speed =
-      document.getElementById(
-        "speed"
-      );
-
-    const status =
-      document.getElementById(
-        "delivery-status"
-      );
-
-    if (speed) {
-
-      const observer =
-        new MutationObserver(
-          () => {
-
-            const value =
-              Number(
-                speed.textContent
-                  .replace(
-                    /[^0-9.]/g,
-                    ""
-                  )
-              ) || 0;
-
-            const car =
-              document.getElementById(
-                "delivery-car"
-              );
-
-            if (car) {
-
-              car.classList.toggle(
-                "evforge-fast-car",
-                value >= 70
-              );
-            }
-          }
-        );
-
-      observer.observe(
-        speed,
-        {
-          childList: true,
-          characterData: true,
-          subtree: true
-        }
-      );
-    }
-
-
-    if (status) {
-
-      const observer =
-        new MutationObserver(
-          () => {
-
-            const text =
-              status.textContent
-                .toLowerCase();
-
-            if (
-              text.includes(
-                "delivered"
-              ) &&
-              !deliveredShown
-            ) {
-
-              deliveredShown =
-                true;
-
-              status.classList.add(
-                "evforge-delivered"
-              );
-
-              createConfetti();
-
-            }
-
-            if (
-              !text.includes(
-                "delivered"
-              )
-            ) {
-
-              deliveredShown =
-                false;
-            }
-
-          }
-        );
-
-      observer.observe(
-        status,
-        {
-          childList: true,
-          characterData: true,
-          subtree: true
-        }
-      );
-    }
-  }
-
-
-  function start() {
-
-    injectStyles();
-
-    animateProducts();
-
-    watchTracker();
-
-    document.addEventListener(
-      "click",
-      event => {
-
-        createRipple(event);
-
-        animateWishlist(
-          event
-        );
-
-      }
-    );
-
-
-    const observer =
-      new MutationObserver(
-        () => {
-
-          setTimeout(
-            animateProducts,
-            20
-          );
-
-        }
-      );
-
-    observer.observe(
-      document.body,
-      {
-        childList: true,
-        subtree: true
-      }
-    );
-  }
-
-
-  if (
-    document.readyState ===
-    "loading"
-  ) {
-
-    document.addEventListener(
-      "DOMContentLoaded",
-      start
-    );
-
-  } else {
-
-    start();
-
-  }
-
-})(); 

@@ -1,0 +1,758 @@
+/* =========================================================
+   EVFORGE ANIMATION PACK
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   GLOBAL
+   --------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* ---------------------------------------------------------
+   NAVIGATION
+   --------------------------------------------------------- */
+
+#site-nav {
+  animation: navDrop 0.65s cubic-bezier(.2,.8,.2,1) both;
+}
+
+#site-nav .brand {
+  transition:
+    transform 0.25s ease,
+    text-shadow 0.25s ease;
+}
+
+#site-nav .brand:hover {
+  transform: scale(1.04);
+  text-shadow:
+    0 0 8px rgba(255, 212, 0, .45),
+    0 0 22px rgba(255, 212, 0, .2);
+}
+
+#site-nav .navlinks a {
+  position: relative;
+  transition:
+    transform 0.22s ease,
+    color 0.22s ease;
+}
+
+#site-nav .navlinks a:hover {
+  transform: translateY(-2px);
+}
+
+#site-nav .navlinks a::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 0;
+  height: 2px;
+  border-radius: 99px;
+  background: #ffd400;
+  transform: translateX(-50%);
+  transition: width 0.25s ease;
+}
+
+#site-nav .navlinks a:hover::after,
+#site-nav .navlinks a.current::after {
+  width: 70%;
+}
+
+/* ---------------------------------------------------------
+   HERO
+   --------------------------------------------------------- */
+
+.hero,
+.hero-section,
+.home-hero {
+  animation: heroAppear 0.9s cubic-bezier(.16,1,.3,1) both;
+}
+
+.hero h1,
+.hero-section h1,
+.home-hero h1 {
+  animation:
+    heroTitle 0.9s cubic-bezier(.16,1,.3,1) 0.12s both;
+}
+
+.hero p,
+.hero-section p,
+.home-hero p {
+  animation:
+    fadeUp 0.8s ease 0.3s both;
+}
+
+.hero .btn,
+.hero-section .btn,
+.home-hero .btn {
+  animation:
+    buttonAppear 0.7s cubic-bezier(.16,1,.3,1) 0.48s both;
+}
+
+/* ---------------------------------------------------------
+   BUTTONS
+   --------------------------------------------------------- */
+
+.btn {
+  position: relative;
+  overflow: hidden;
+  transform: translateZ(0);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease;
+}
+
+.btn::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -120%;
+  width: 60%;
+  height: 200%;
+  background: rgba(255,255,255,.22);
+  transform: rotate(20deg);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+.btn:hover {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.28);
+}
+
+.btn:hover::before {
+  left: 150%;
+}
+
+.btn:active {
+  transform: translateY(1px) scale(.98);
+}
+
+/* ---------------------------------------------------------
+   PRODUCT CARDS
+   --------------------------------------------------------- */
+
+.product {
+  position: relative;
+  overflow: hidden;
+  transform:
+    translateY(18px)
+    scale(.97);
+  opacity: 0;
+  animation:
+    productReveal
+    .65s
+    cubic-bezier(.16,1,.3,1)
+    forwards;
+
+  transition:
+    transform .28s cubic-bezier(.2,.8,.2,1),
+    box-shadow .28s ease,
+    border-color .28s ease;
+}
+
+.product:nth-child(2) {
+  animation-delay: .06s;
+}
+
+.product:nth-child(3) {
+  animation-delay: .12s;
+}
+
+.product:nth-child(4) {
+  animation-delay: .18s;
+}
+
+.product:nth-child(5) {
+  animation-delay: .24s;
+}
+
+.product:nth-child(6) {
+  animation-delay: .30s;
+}
+
+.product:nth-child(7) {
+  animation-delay: .36s;
+}
+
+.product:nth-child(8) {
+  animation-delay: .42s;
+}
+
+.product:hover {
+  transform:
+    translateY(-10px)
+    scale(1.025);
+  box-shadow:
+    0 18px 42px rgba(0,0,0,.34),
+    0 0 24px rgba(255,212,0,.10);
+}
+
+/* Card image zoom */
+
+.product img {
+  transition:
+    transform .45s cubic-bezier(.2,.8,.2,1),
+    filter .45s ease;
+}
+
+.product:hover img {
+  transform:
+    scale(1.075)
+    rotate(-1deg);
+  filter:
+    brightness(1.08)
+    saturate(1.08);
+}
+
+/* ---------------------------------------------------------
+   HOLOGRAPHIC CARD SHINE
+   --------------------------------------------------------- */
+
+.product::after {
+  content: "";
+  position: absolute;
+  top: -80%;
+  left: -90%;
+  width: 55%;
+  height: 260%;
+  background:
+    linear-gradient(
+      105deg,
+      transparent 0%,
+      rgba(255,255,255,0) 35%,
+      rgba(255,255,255,.18) 48%,
+      rgba(255,255,255,.38) 52%,
+      rgba(255,255,255,0) 65%,
+      transparent 100%
+    );
+  transform: rotate(18deg);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.product:hover::after {
+  opacity: 1;
+  animation:
+    cardShine 1.1s ease forwards;
+}
+
+/* ---------------------------------------------------------
+   BADGES
+   --------------------------------------------------------- */
+
+.badge {
+  transition:
+    transform .2s ease,
+    box-shadow .2s ease;
+}
+
+.product:hover .badge {
+  transform: translateY(-2px);
+  box-shadow:
+    0 4px 14px rgba(0,0,0,.18);
+}
+
+/* ---------------------------------------------------------
+   PRICE
+   --------------------------------------------------------- */
+
+.product .price {
+  transition:
+    transform .2s ease,
+    text-shadow .2s ease;
+}
+
+.product:hover .price {
+  transform: scale(1.04);
+  text-shadow:
+    0 0 12px rgba(255,212,0,.18);
+}
+
+/* ---------------------------------------------------------
+   WISHLIST HEART
+   --------------------------------------------------------- */
+
+.heart {
+  transition:
+    transform .2s ease,
+    filter .2s ease;
+}
+
+.heart:hover {
+  transform: scale(1.12);
+  filter:
+    drop-shadow(0 0 7px rgba(255,90,120,.35));
+}
+
+.heart-pop {
+  animation:
+    heartPop .45s cubic-bezier(.2,1.5,.5,1) both;
+}
+
+/* ---------------------------------------------------------
+   CART BADGE
+   --------------------------------------------------------- */
+
+.cart-badge-pop {
+  animation:
+    cartBadgePop .5s cubic-bezier(.2,1.5,.5,1) both;
+}
+
+/* ---------------------------------------------------------
+   CART ROWS
+   --------------------------------------------------------- */
+
+.cart-row {
+  animation:
+    cartRowEnter .45s cubic-bezier(.16,1,.3,1) both;
+
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease;
+}
+
+.cart-row:hover {
+  transform:
+    translateX(5px);
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.18);
+}
+
+.cart-row img {
+  transition:
+    transform .3s ease;
+}
+
+.cart-row:hover img {
+  transform:
+    scale(1.07)
+    rotate(-2deg);
+}
+
+/* ---------------------------------------------------------
+   PANELS
+   --------------------------------------------------------- */
+
+.panel,
+.deal,
+.order-card {
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+.panel:hover,
+.deal:hover,
+.order-card:hover {
+  transform:
+    translateY(-4px);
+  box-shadow:
+    0 14px 34px rgba(0,0,0,.2);
+}
+
+/* ---------------------------------------------------------
+   CHECKOUT FORM
+   --------------------------------------------------------- */
+
+input,
+select,
+textarea {
+  transition:
+    border-color .2s ease,
+    box-shadow .2s ease,
+    transform .2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  transform: translateY(-1px);
+  box-shadow:
+    0 0 0 3px rgba(255,212,0,.08),
+    0 8px 22px rgba(0,0,0,.12);
+}
+
+/* ---------------------------------------------------------
+   COUPON
+   --------------------------------------------------------- */
+
+.coupon {
+  transition:
+    transform .25s ease,
+    box-shadow .25s ease;
+}
+
+.coupon:hover {
+  transform:
+    translateY(-3px);
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.18);
+}
+
+/* ---------------------------------------------------------
+   TRACKER
+   --------------------------------------------------------- */
+
+#delivery-map {
+  transition:
+    filter .5s ease;
+}
+
+.tracker-speeding #delivery-map {
+  filter:
+    drop-shadow(
+      0 0 13px rgba(255,212,0,.18)
+    );
+}
+
+#delivery-car {
+  filter:
+    drop-shadow(
+      0 5px 7px rgba(0,0,0,.28)
+    );
+  transition:
+    filter .2s ease;
+}
+
+.tracker-speeding #delivery-car {
+  filter:
+    drop-shadow(
+      0 5px 7px rgba(0,0,0,.28)
+    )
+    drop-shadow(
+      0 0 10px rgba(255,212,0,.35)
+    );
+}
+
+/* Moving road glow */
+
+.tracker-speeding #car-route {
+  filter:
+    drop-shadow(
+      0 0 5px rgba(255,212,0,.22)
+    );
+}
+
+/* ---------------------------------------------------------
+   DELIVERY COMPLETE
+   --------------------------------------------------------- */
+
+.delivery-complete {
+  animation:
+    deliveryComplete
+    .8s
+    cubic-bezier(.16,1,.3,1)
+    both;
+}
+
+.delivery-complete #delivery-car {
+  animation:
+    arrivalBounce
+    .7s
+    cubic-bezier(.2,1.5,.5,1)
+    both;
+}
+
+/* ---------------------------------------------------------
+   GENERATED PARTICLES
+   --------------------------------------------------------- */
+
+.evforge-particle {
+  position: fixed;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  animation:
+    particleFly
+    .7s
+    cubic-bezier(.15,.8,.3,1)
+    forwards;
+}
+
+.evforge-speed-particle {
+  position: fixed;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: .8;
+  animation:
+    speedParticle
+    .45s
+    linear
+    forwards;
+}
+
+/* ---------------------------------------------------------
+   KEYFRAMES
+   --------------------------------------------------------- */
+
+@keyframes navDrop {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroAppear {
+  from {
+    opacity: 0;
+    transform: scale(.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes heroTitle {
+  from {
+    opacity: 0;
+    transform:
+      translateY(25px)
+      scale(.97);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes buttonAppear {
+  from {
+    opacity: 0;
+    transform:
+      translateY(16px)
+      scale(.94);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+@keyframes productReveal {
+  from {
+    opacity: 0;
+    transform:
+      translateY(18px)
+      scale(.97);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+@keyframes cardShine {
+  from {
+    left: -90%;
+  }
+
+  to {
+    left: 145%;
+  }
+}
+
+@keyframes heartPop {
+  0% {
+    transform: scale(1);
+  }
+
+  35% {
+    transform: scale(1.55);
+  }
+
+  65% {
+    transform: scale(.82);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes cartBadgePop {
+  0% {
+    transform: scale(1);
+  }
+
+  35% {
+    transform: scale(1.45);
+  }
+
+  65% {
+    transform: scale(.88);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes cartRowEnter {
+  from {
+    opacity: 0;
+    transform:
+      translateX(-18px);
+  }
+
+  to {
+    opacity: 1;
+    transform:
+      translateX(0);
+  }
+}
+
+@keyframes deliveryComplete {
+  0% {
+    opacity: .5;
+    transform: scale(.96);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.025);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes arrivalBounce {
+  0% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+
+  45% {
+    transform:
+      translateY(-8px)
+      scale(1.08);
+  }
+
+  75% {
+    transform:
+      translateY(2px)
+      scale(.96);
+  }
+
+  100% {
+    transform:
+      translateY(0)
+      scale(1);
+  }
+}
+
+@keyframes particleFly {
+  0% {
+    opacity: 1;
+    transform:
+      translate(0,0)
+      scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate(var(--px),var(--py))
+      scale(.15);
+  }
+}
+
+@keyframes speedParticle {
+  0% {
+    opacity: 0;
+    transform: translateX(0) scale(.5);
+  }
+
+  20% {
+    opacity: .8;
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translateX(-45px)
+      scale(0);
+  }
+}
+
+/* ---------------------------------------------------------
+   REDUCED MOTION
+   --------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+  .product:hover {
+    transform:
+      translateY(-5px)
+      scale(1.01);
+  }
+
+  .product:hover img {
+    transform: scale(1.035);
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+}

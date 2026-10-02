@@ -141,3 +141,304 @@ footer{margin-top:50px;padding:28px 5%;text-align:center;border-top:1px solid va
 #demo-checkout-form button[type="submit"] {
   margin: 12px 0;
 }
+/* ==========================================
+   EVFORGE UPGRADE STYLES
+   ========================================== */
+
+
+/* ---------- CHECKOUT ---------- */
+
+.coupon-checkout {
+  margin-top: 20px;
+}
+
+.coupon-input-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 15px;
+}
+
+.checkout-total-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.checkout-total-row.total {
+  font-size: 1.25rem;
+}
+
+
+/* ---------- COUPONS ---------- */
+
+.coupon-card {
+  background: #111a29;
+  border: 1px solid #29364a;
+  border-radius: 16px;
+  padding: 22px;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.coupon-card:hover {
+  transform: translateY(-3px);
+  border-color: #ffd400;
+}
+
+.coupon-code {
+  display: inline-block;
+  margin: 15px 0;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #080c15;
+  border: 1px dashed #ffd400;
+  color: #ffd400;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.coupon-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.saved-coupons-section {
+  margin-top: 30px;
+}
+
+.saved-coupons {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.coupon-saved-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 16px;
+  background: #111a29;
+  border: 1px solid #29364a;
+  border-radius: 12px;
+}
+
+.coupon-saved-card strong {
+  color: #ffd400;
+  letter-spacing: 1px;
+}
+
+.coupon-saved-card span {
+  color: #aab7c9;
+  flex: 1;
+}
+
+
+/* ---------- ORDER HISTORY ---------- */
+
+.history-page {
+  width: min(1100px, 92%);
+  margin: 40px auto 70px;
+}
+
+.hero-small {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.hero-small h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin: 10px 0;
+}
+
+.hero-small p {
+  color: #aab7c9;
+}
+
+.eyebrow {
+  color: #ffd400;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.history-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.history-list {
+  display: grid;
+  gap: 18px;
+}
+
+.order-card {
+  background: #111a29;
+  border: 1px solid #29364a;
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.order-card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid #29364a;
+  padding-bottom: 15px;
+}
+
+.order-card-top h3 {
+  color: #ffd400;
+  margin: 0 0 5px;
+}
+
+.order-card-top p {
+  color: #8998ad;
+  margin: 0;
+}
+
+.order-status {
+  display: inline-flex;
+  align-items: center;
+  height: fit-content;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: #173c2b;
+  color: #52f5a4;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.order-customer {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 15px 0;
+}
+
+.order-customer span {
+  color: #aab7c9;
+}
+
+.order-items {
+  margin: 0;
+  padding-left: 20px;
+  color: #dce4ef;
+  line-height: 1.8;
+}
+
+.order-items span {
+  color: #aab7c9;
+}
+
+.order-total-lines {
+  margin: 20px 0;
+  padding-top: 15px;
+  border-top: 1px solid #29364a;
+}
+
+.order-total-lines > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 6px 0;
+}
+
+.order-grand-total {
+  margin-top: 8px;
+  padding-top: 12px !important;
+  border-top: 1px solid #29364a;
+  font-size: 1.2rem;
+  color: #ffd400;
+}
+
+
+/* ---------- TURBO TRACKER ---------- */
+
+.tracker-dashboard {
+  width: min(1000px, 92%);
+  margin: 20px auto;
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.tracker-stat {
+  padding: 18px;
+  border-radius: 15px;
+  background: #111a29;
+  border: 1px solid #29364a;
+  text-align: center;
+}
+
+.tracker-stat span {
+  display: block;
+  color: #8998ad;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.tracker-stat strong {
+  color: #ffd400;
+  font-size: 1.35rem;
+}
+
+.tracker-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 20px auto;
+}
+
+.btn.danger {
+  background: #54232b;
+  color: #ffd9de;
+}
+
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 700px) {
+
+  .tracker-dashboard {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .order-card {
+    padding: 16px;
+  }
+
+  .coupon-saved-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+}
+
+@media (max-width: 450px) {
+
+  .tracker-dashboard {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tracker-stat {
+    padding: 14px 8px;
+  }
+
+  .tracker-stat strong {
+    font-size: 1rem;
+  }
+
+}

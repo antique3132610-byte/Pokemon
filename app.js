@@ -2742,16 +2742,7 @@ function startRace() {
       shownSpeed,
       distance
     );
-
-    const bar =
-      document.getElementById(
-        "delivery-progress"
-      );
-
-    if (bar) {
-      bar.style.width =
-        (raceProgress * 100) + "%";
-    }
+       }
 
     /*
       Delivery complete.
@@ -2810,81 +2801,118 @@ function startRace() {
           Math.max(
             0,
             12.4 *
-            (
-              1 -
-              raceProgress
-            )
-          );
+           /* ==========================================
+   TRACKER INITIALISATION
+   ========================================== */
 
+function initTracker() {
 
-        const shownSpeed =
-          raceProgress >= 1
-            ? 0
-            : Math.max(
-                1,
-                Math.min(
-                  99,
-                  Math.round(
-                    speed
-                  )
-                )
-              );
+  const map =
+    document.getElementById(
+      "delivery-map"
+    );
 
+  if (!map) {
+    return;
+  }
 
-        setText(
-          "speed",
-          shownSpeed
-        );
+  /*
+    No order = no tracker.
+  */
 
+  if (!hasOrder()) {
+    window.location.replace(
+      "shop.html"
+    );
+    return;
+  }
 
-        setText(
-          "distance",
-          distance.toFixed(1)
-        );
+  /*
+    Turbo Tracker is locked until
+    the demo SMS code 999999
+    has been verified.
+  */
 
+  if (
+    sessionStorage.getItem(
+      VERIFIED_KEY
+    ) !== "yes"
+  ) {
+    window.location.replace(
+      "sms.html"
+    );
+    return;
+  }
 
-        updateTrackerDashboard(
-          shownSpeed,
-          distance
-        );
+  buildFixedMap();
 
+  const order =
+    getOrder();
 
-        const bar =
-          document.getElementById(
-            "delivery-progress"
-          );
+  if (order) {
 
-        if (bar) {
+    setText(
+      "delivery-status",
+      order.status ||
+      "Order confirmed"
+    );
 
-          bar.style.width =
-            (
-              raceProgress *
-              100
-            ) + "%";
-        }
+    setText(
+      "delivery-message",
+      `Order ${order.orderId} confirmed! Preparing your delivery.`
+    );
 
+    setText(
+      "tracker-order-id",
+      order.orderId
+    );
 
-        /*
-          Finished.
-        */
+    setText(
+      "tracker-customer-name",
+      order.customer?.name ||
+      "Demo customer"
+    );
 
-        if (
-          raceProgress >= 1
-        ) {
+    setText(
+      "tracker-customer-city",
+      order.customer?.city ||
+      "Not provided"
+    );
+  }
 
-          clearInterval(
-            raceTimer
-          );
+  /*
+    Continue from saved progress if
+    the browser already has an active
+    demo delivery.
+  */
 
-          raceTimer = null;
+  placeCarAt(
+    raceProgress
+  );
 
-          speed = 0;
+  const bar =
+    document.getElementById(
+      "delivery-progress"
+    );
 
+  if (bar) {
+    bar.style.width =
+      (raceProgress * 100) + "%";
+  }
 
-          setText(
-            "speed",
-            "0"
-          );
+  /*
+    Automatically start the delivery.
+
+    No Start button.
+    No Stop button.
+    No Pause button.
+  */
+
+  setTimeout(
+    startRace,
+    700
+  );
+}
 
           setText(
             "distance",

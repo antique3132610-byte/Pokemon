@@ -2569,41 +2569,39 @@ function updateTrackerDashboard(
 /* ==========================================
    START DELIVERY
    ========================================== */
+/* ==========================================
+   AUTOMATIC DELIVERY
+   ========================================== */
 
 function startRace() {
 
   if (!hasOrder()) {
-
-    window.location.replace(
-      "shop.html"
-    );
-
+    window.location.replace("shop.html");
     return;
   }
 
-
-  const route =
-    document.getElementById(
-      "car-route"
-    );
-
-  if (
-    !route ||
-    !route.getTotalLength()
-  ) {
+  /* Turbo Tracker requires demo SMS verification */
+  if (sessionStorage.getItem(VERIFIED_KEY) !== "yes") {
+    window.location.replace("sms.html");
     return;
   }
 
+  const route = document.getElementById("car-route");
 
+  if (!route || !route.getTotalLength()) {
+    return;
+  }
+
+  /* Prevent two animations running at once */
   if (raceTimer) {
     return;
   }
 
-
-  if (
-    raceProgress >= 1
-  ) {
-
+  /*
+    If an old delivery was already completed,
+    begin the current demo order again.
+  */
+  if (raceProgress >= 1) {
     raceProgress = 0;
 
     localStorage.setItem(
@@ -2614,125 +2612,194 @@ function startRace() {
     placeCarAt(0);
   }
 
-
   setText(
     "delivery-status",
     "On the way"
   );
 
-
   setText(
     "delivery-message",
-    "Your EVFORGE delivery car is on the road!"
+    "Your EVFORGE delivery car is on the road! 🏎️"
   );
 
-
-  const button =
-    document.getElementById(
-      "start-btn"
-    );
-
-  if (button) {
-    button.disabled =
-      true;
-  }
-
-
   let speed = 0;
-
   let elapsed = 0;
 
-
   /*
-    50ms update = 20 FPS.
-    The car's movement is based
-    on speed, not a fixed amount.
+    50ms update = 20 updates per second.
+
+    The important part:
+    the car's progress is calculated from
+    its simulated speed, rather than using
+    one fixed movement amount.
   */
 
-  raceTimer =
-    setInterval(
-      () => {
+  raceTimer = setInterval(() => {
 
-        elapsed +=
-          0.05;
+    elapsed += 0.05;
 
+    const targetSpeed =
+      getTargetSpeed(
+        elapsed,
+        raceProgress
+      );
 
-        const target =
-          getTargetSpeed(
-            elapsed,
-            raceProgress
-          );
+    /*
+      Smooth acceleration and braking.
+    */
 
+    const acceleration =
+      targetSpeed > speed
+        ? 1.8
+        : 3.2;
 
-        /*
-          Smooth acceleration
-          and braking.
-        */
+    if (speed < targetSpeed) {
 
-        const acceleration =
-          target > speed
-            ? 1.8
-            : 3.2;
+      speed = Math.min(
+        targetSpeed,
+        speed + acceleration
+      );
 
+    } else {
 
-        if (
-          speed <
-          target
-        ) {
+      speed = Math.max(
+        targetSpeed,
+        speed - acceleration
+      );
+    }
 
-          speed =
-            Math.min(
-              target,
-              speed +
-              acceleration
-            );
+    /*
+      Keep the actual speed between
+      1 and 99 km/h.
+    */
 
-        } else {
+    speed = Math.max(
+      1,
+      Math.min(
+        99,
+        speed
+      )
+    );
 
-          speed =
-            Math.max(
-              target,
-              speed -
-              acceleration
-            );
-        }
+    /*
+      Convert speed into movement.
 
+      99 km/h = maximum simulated
+      animation speed.
+    */
 
-        /*
-          Convert speed into
-          animation progress.
+    const baseMovement = 0.0027;
 
-          99 km/h =
-          maximum animation rate.
-        */
+    const progressStep =
+      (speed / 99) *
+      baseMovement;
 
-        const baseMovement =
-          0.0027;
+    raceProgress = Math.min(
+      1,
+      raceProgress + progressStep
+    );
 
+    localStorage.setItem(
+      RACE_KEY,
+      String(raceProgress)
+    );
 
-        const progressStep =
-          (
-            speed /
-            99
-          ) *
-          baseMovement;
+    /*
+      Move the car along the route.
+      placeCarAt() keeps the car upright.
+    */
 
+    placeCarAt(raceProgress);
 
-        raceProgress =
-          Math.min(
+    const distance =
+      Math.max(
+        0,
+        12.4 * (1 - raceProgress)
+      );
+
+    const shownSpeed =
+      raceProgress >= 1
+        ? 0
+        : Math.max(
             1,
-            raceProgress +
-            progressStep
+            Math.min(
+              99,
+              Math.round(speed)
+            )
           );
 
+    setText(
+      "speed",
+      shownSpeed
+    );
 
-        localStorage.setItem(
-          RACE_KEY,
-          String(
-            raceProgress
-          )
-        );
+    setText(
+      "distance",
+      distance.toFixed(1)
+    );
 
+    updateTrackerDashboard(
+      shownSpeed,
+      distance
+    );
+
+    const bar =
+      document.getElementById(
+        "delivery-progress"
+      );
+
+    if (bar) {
+      bar.style.width =
+        (raceProgress * 100) + "%";
+    }
+
+    /*
+      Delivery complete.
+    */
+
+    if (raceProgress >= 1) {
+
+      clearInterval(raceTimer);
+      raceTimer = null;
+
+      speed = 0;
+
+      setText(
+        "speed",
+        "0"
+      );
+
+      setText(
+        "distance",
+        "0.0"
+      );
+
+      setText(
+        "delivery-status",
+        "Delivered 🏁"
+      );
+
+      setText(
+        "delivery-message",
+        "Your simulated delivery has arrived!"
+      );
+
+      updateTrackerDashboard(
+        0,
+        0
+      );
+
+      if (bar) {
+        bar.style.width = "100%";
+      }
+
+      notify(
+        "Demo delivery complete! 🏁"
+      );
+    }
+
+  }, 50);
+}
 
         placeCarAt(
           raceProgress
